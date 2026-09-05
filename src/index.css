@@ -194,7 +194,8 @@ p {
 
 .form-input:focus,
 .form-textarea:focus {
-  border-color: var(--border-focus);
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal) 14%, transparent);
 }
 
 .form-input::placeholder,
@@ -208,7 +209,6 @@ p {
   line-height: 1.5;
 }
 
-/* Card */
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -312,6 +312,10 @@ p {
 ::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--teal);
 }
 
 @media (max-width: 600px) {

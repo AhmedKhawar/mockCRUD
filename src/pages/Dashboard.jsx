@@ -17,6 +17,72 @@ const TrashIcon = () => (
     </svg>
 )
 
+const DOC_ENDPOINTS = [
+    { method: 'GET', path: '/m/{slug}/{resource}', desc: 'List all records' },
+    { method: 'GET', path: '/m/{slug}/{resource}/:id', desc: 'Get single record by ID' },
+    { method: 'POST', path: '/m/{slug}/{resource}', desc: 'Create a new record' },
+    { method: 'PUT', path: '/m/{slug}/{resource}/:id', desc: 'Replace a record by ID' },
+    { method: 'DELETE', path: '/m/{slug}/{resource}/:id', desc: 'Delete a record by ID' },
+]
+
+function DocPanel() {
+    const [open, setOpen] = useState(false)
+    return (
+        <div className="doc-panel">
+            <button className="doc-panel-toggle" onClick={() => setOpen(o => !o)}>
+                <span className="doc-panel-icon">📖</span>
+                <span className="doc-panel-title">API Reference</span>
+                <svg className={`doc-chevron${open ? ' open' : ''}`} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                </svg>
+            </button>
+
+            {open && (
+                <div className="doc-panel-body">
+                    <p className="doc-intro">
+                        Every resource you generate gets a live REST API at the URL shown on its card.
+                        Your project's <strong>slug</strong> is the unique identifier — it never changes.
+                    </p>
+
+                    <div className="doc-table">
+                        <div className="doc-table-head">
+                            <span>Method</span><span>Endpoint</span><span>Description</span>
+                        </div>
+                        {DOC_ENDPOINTS.map((ep, i) => (
+                            <div key={i} className="doc-table-row">
+                                <span className={`badge badge-${ep.method}`}>{ep.method}</span>
+                                <code className="mono doc-path">{ep.path}</code>
+                                <span className="doc-row-desc">{ep.desc}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="doc-notes">
+                        <div className="doc-note">
+                            <span className="doc-note-label">ID field</span>
+                            <p>MongoDB auto-generates a unique <code className="mono">_id</code> for every record.
+                                The API exposes it as <code className="mono">id</code> in all JSON responses.
+                                Use this <code className="mono">id</code> for GET-by-id, PUT, and DELETE calls.</p>
+                        </div>
+                        <div className="doc-note">
+                            <span className="doc-note-label">Example</span>
+                            <pre className="doc-code">{`// Create a customer
+POST /m/yaecqzrr/customers
+{ "name": "Alice", "email": "alice@ex.com" }
+
+// Response → { "id": "64a...", "name": "Alice", ... }
+
+// Update using returned id
+PUT /m/yaecqzrr/customers/64a...
+{ "name": "Alice Updated" }`}</pre>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
+
 function ProjectCard({ project, onNavigate, onDelete }) {
     const [confirming, setConfirming] = useState(false)
     const [deleting, setDeleting] = useState(false)
@@ -48,12 +114,8 @@ function ProjectCard({ project, onNavigate, onDelete }) {
                     </div>
                 ) : (
                     <>
-                        <button className="bin-btn" onClick={() => setConfirming(true)} title="Delete">
-                            <TrashIcon />
-                        </button>
-                        <button className="proj-open-btn" onClick={() => onNavigate(project.id)}>
-                            Open →
-                        </button>
+                        <button className="bin-btn" onClick={() => setConfirming(true)} title="Delete"><TrashIcon /></button>
+                        <button className="proj-open-btn" onClick={() => onNavigate(project.id)}>Open →</button>
                     </>
                 )}
             </div>
@@ -81,10 +143,10 @@ export default function Dashboard() {
         setLoading(true); setLoadError('')
         try {
             const res = await fetch(`${API}/api/project`, {
-                headers: { 'Authorization': `Bearer ${token}` },
+                headers: { Authorization: `Bearer ${token}` },
             })
             const data = await res.json()
-            if (!res.ok) throw new Error(data.message || 'Failed to load projects')
+            if (!res.ok) throw new Error(data.message || 'Failed to load')
             setProjects(data.projects || [])
         } catch (err) { setLoadError(err.message) }
         finally { setLoading(false) }
@@ -97,13 +159,13 @@ export default function Dashboard() {
         try {
             const res = await fetch(`${API}/api/project`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ name: newName.trim() }),
             })
             const data = await res.json()
-            if (!res.ok) throw new Error(data.message || 'Failed to create project')
+            if (!res.ok) throw new Error(data.message || 'Failed')
             setNewName('')
-            show(`Project "${data.project.name}" created!`, 'success')
+            show(`"${data.project.name}" created!`, 'success')
             navigate(`/app/${data.project.id}`)
         } catch (err) { setCreateError(err.message) }
         finally { setCreating(false) }
@@ -111,8 +173,7 @@ export default function Dashboard() {
 
     const deleteProject = async (projectId) => {
         const res = await fetch(`${API}/api/project/${projectId}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` },
+            method: 'DELETE', headers: { Authorization: `Bearer ${token}` },
         })
         const data = await res.json()
         if (!res.ok) { show(data.message || 'Delete failed', 'error'); return }
@@ -124,12 +185,15 @@ export default function Dashboard() {
         <>
             <Navbar />
             <div className="container dashboard">
-                <div className="dash-header"><h1>Projects</h1></div>
+                <div className="dash-header">
+                    <h1>Projects</h1>
+                    <p className="dash-sub">Each project groups your mock API resources under a shared slug.</p>
+                </div>
 
                 <form onSubmit={createProject} className="create-form card">
                     <h2>New project</h2>
                     <div className="create-row">
-                        <input className="form-input" placeholder="e.g. Blog API"
+                        <input className="form-input" placeholder="e.g. Blog API, E-commerce, CRM…"
                             value={newName} onChange={e => setNewName(e.target.value)} required />
                         <button type="submit" className="btn btn-teal" disabled={creating}>
                             {creating ? <><span className="spinner" /> Creating…</> : '+ Create'}
@@ -138,7 +202,10 @@ export default function Dashboard() {
                     {createError && <div className="alert alert-error">{createError}</div>}
                 </form>
 
-                <p className="proj-section-label">Your projects ({projects.length})</p>
+                <div className="proj-section-row">
+                    <p className="proj-section-label">Your projects ({projects.length})</p>
+                </div>
+
                 <div className="proj-list">
                     {loading && <p className="dash-empty">Loading…</p>}
                     {loadError && <div className="alert alert-error">{loadError}</div>}
@@ -151,6 +218,8 @@ export default function Dashboard() {
                             onDelete={deleteProject} />
                     ))}
                 </div>
+
+                <DocPanel />
             </div>
         </>
     )

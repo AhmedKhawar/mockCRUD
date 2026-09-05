@@ -8,7 +8,7 @@ export function ToastProvider({ children }) {
     const show = useCallback((msg, type = 'success') => {
         const id = Date.now()
         setToasts(t => [...t, { id, msg, type }])
-        setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3200)
+        setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 1800)
     }, [])
 
     const dismiss = useCallback(id => setToasts(t => t.filter(x => x.id !== id)), [])
