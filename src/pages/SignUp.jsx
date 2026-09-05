@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useToast } from '../context/ToastContext'
 import Navbar from '../components/Navbar'
 import './AuthForm.css'
 
@@ -7,16 +8,16 @@ const API = 'https://mock-crud-backend.vercel.app'
 
 export default function SignUp() {
     const navigate = useNavigate()
+    const { show } = useToast()
     const [form, setForm] = useState({ email: '', password: '' })
     const [error, setError] = useState('')
-    const [success, setSuccess] = useState('')
     const [loading, setLoading] = useState(false)
 
     const change = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
     const submit = async e => {
         e.preventDefault()
-        setError(''); setSuccess(''); setLoading(true)
+        setError(''); setLoading(true)
         try {
             const res = await fetch(`${API}/api/signup`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -24,8 +25,8 @@ export default function SignUp() {
             })
             const data = await res.json()
             if (!res.ok) throw new Error(data.message || 'Sign up failed')
-            setSuccess('Account created! Redirecting…')
-            setTimeout(() => navigate('/signin'), 1400)
+            show('Account created! Please sign in.', 'success')
+            setTimeout(() => navigate('/signin'), 800)
         } catch (err) { setError(err.message) }
         finally { setLoading(false) }
     }
@@ -49,9 +50,8 @@ export default function SignUp() {
                                 placeholder="••••••••" value={form.password} onChange={change} required />
                         </div>
                         {error && <div className="alert alert-error">{error}</div>}
-                        {success && <div className="alert alert-success">{success}</div>}
-                        <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
-                            {loading ? <><span className="spinner" /> Creating…</> : 'Sign Up'}
+                        <button type="submit" className="btn btn-teal auth-submit" disabled={loading}>
+                            {loading ? <><span className="spinner" /> Creating account…</> : 'Create account'}
                         </button>
                     </form>
                     <p className="auth-footer">Already have an account? <Link to="/signin">Sign in</Link></p>

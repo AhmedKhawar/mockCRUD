@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 import Navbar from '../components/Navbar'
 import './AuthForm.css'
 
@@ -9,6 +10,7 @@ const API = 'https://mock-crud-backend.vercel.app'
 export default function SignIn() {
     const navigate = useNavigate()
     const { login } = useAuth()
+    const { show } = useToast()
     const [form, setForm] = useState({ email: '', password: '' })
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
@@ -28,6 +30,7 @@ export default function SignIn() {
             const token = data.token || data.data?.token
             if (!token) throw new Error('No token received')
             login(token, { email: form.email })
+            show('Signed in successfully!', 'success')
             navigate('/app')
         } catch (err) { setError(err.message) }
         finally { setLoading(false) }
@@ -52,8 +55,8 @@ export default function SignIn() {
                                 placeholder="••••••••" value={form.password} onChange={change} required />
                         </div>
                         {error && <div className="alert alert-error">{error}</div>}
-                        <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
-                            {loading ? <><span className="spinner" /> Signing in…</> : 'Sign In'}
+                        <button type="submit" className="btn btn-teal auth-submit" disabled={loading}>
+                            {loading ? <><span className="spinner" /> Signing in…</> : 'Sign in'}
                         </button>
                     </form>
                     <p className="auth-footer">No account? <Link to="/signup">Sign up free</Link></p>
