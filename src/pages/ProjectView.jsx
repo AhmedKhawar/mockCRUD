@@ -46,11 +46,62 @@ function MethodBadge({ method }) {
     return <span className={`badge badge-${method}`}>{method}</span>
 }
 
-function ResourceCard({ resource, index, onDelete }) {
+function AuthAPIPanel({ slug }) {
+    const base = `${API}/m/${slug}`
+    const [copiedIdx, setCopiedIdx] = useState(null)
+
+    const endpoints = [
+        { method: 'POST', path: `${base}/signup`, desc: 'Register a new user — body: email, password, name, dob' },
+        { method: 'POST', path: `${base}/login`, desc: 'Authenticate and receive a JWT token — body: email, password' },
+        { method: 'POST', path: `${base}/logout`, desc: 'Invalidate the session — requires Bearer token header' },
+    ]
+
+    const copy = (url, i) => {
+        navigator.clipboard.writeText(url)
+        setCopiedIdx(i)
+        setTimeout(() => setCopiedIdx(null), 1800)
+    }
+
+    return (
+        <div className="auth-api-panel">
+            <div className="auth-api-panel-header">
+                <span className="auth-api-panel-icon">🔐</span>
+                <div>
+                    <p className="auth-api-panel-title">Auth API</p>
+                    <p className="auth-api-panel-sub">This project has auth-protected resources. Use these endpoints to manage user sessions.</p>
+                </div>
+            </div>
+            <div className="auth-api-endpoints">
+                {endpoints.map((ep, i) => (
+                    <div key={i} className="auth-api-row">
+                        <div className="auth-api-row-left">
+                            <MethodBadge method={ep.method} />
+                            <div>
+                                <code className="mono auth-api-path">{ep.path}</code>
+                                <p className="auth-api-desc">{ep.desc}</p>
+                            </div>
+                        </div>
+                        <button
+                            className={`url-copy-btn${copiedIdx === i ? ' copied' : ''}`}
+                            onClick={() => copy(ep.path, i)}
+                            title="Copy URL"
+                        >
+                            {copiedIdx === i ? <><CheckIcon /> Copied!</> : <><CopyIcon /> Copy</>}
+                        </button>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
     const [open, setOpen] = useState(false)
     const [confirming, setConfirming] = useState(false)
     const [deleting, setDeleting] = useState(false)
     const [copied, setCopied] = useState(false)
+    const [authEnabled, setAuthEnabled] = useState(resource.auth ?? false)
+    const [togglingAuth, setTogglingAuth] = useState(false)
     const color = ACCENT_COLORS[index % ACCENT_COLORS.length]
 
     const copy = () => {
@@ -64,6 +115,13 @@ function ResourceCard({ resource, index, onDelete }) {
         await onDelete(resource.id)
         setDeleting(false)
         setConfirming(false)
+    }
+
+    const handleToggleAuth = async () => {
+        setTogglingAuth(true)
+        const newVal = await onToggleAuth(resource.id)
+        if (newVal !== null) setAuthEnabled(newVal)
+        setTogglingAuth(false)
     }
 
     // sort endpoints by method order
@@ -97,6 +155,17 @@ function ResourceCard({ resource, index, onDelete }) {
 
                     {/* Actions */}
                     <div className="resource-actions">
+                        {/* Auth toggle */}
+                        <button
+                            className={`auth-toggle-btn${authEnabled ? ' auth-on' : ''}`}
+                            onClick={handleToggleAuth}
+                            disabled={togglingAuth}
+                            title={authEnabled ? 'Auth enabled — click to disable' : 'Auth disabled — click to enable'}
+                        >
+                            {togglingAuth
+                                ? <span className="spinner" />
+                                : <>{authEnabled ? '🔒' : '🔓'} Auth</>}
+                        </button>
                         <button className="icon-btn bin-btn" onClick={() => setConfirming(c => !c)} title="Delete">
                             <TrashIcon />
                         </button>
@@ -207,6 +276,7 @@ export default function ProjectView() {
             const newCards = data.resources.map(r => ({
                 id: r.id,
                 name: r.name,
+                auth: r.auth ?? false,
                 mockUrl: `${API}/m/${project?.slug || ''}/${r.name}`,
                 endpoints: r.spec?.endpoints || [],
             }))
@@ -226,6 +296,25 @@ export default function ProjectView() {
         if (!res.ok) { show(data.message || 'Delete failed', 'error'); return }
         show('Resource deleted', 'info')
         setResources(prev => prev.filter(r => r.id !== resourceId))
+    }
+
+    const toggleResourceAuth = async (resourceId) => {
+        try {
+            const res = await fetch(`${API}/api/resource/${resourceId}/enableAuth`, {
+                method: 'PATCH',
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            const data = await res.json()
+            if (!res.ok) { show(data.message || 'Toggle failed', 'error'); return null }
+            show(data.message, data.auth ? 'success' : 'info')
+
+            setResources(prev => prev.map(r => r.id === resourceId ? { ...r, auth: data.auth } : r))
+
+            return data.auth
+        } catch {
+            show('Toggle failed', 'error')
+            return null
+        }
     }
 
     return (
@@ -257,6 +346,11 @@ export default function ProjectView() {
                     </div>
                 </form>
 
+                {/* Auth API panel — visible when any resource has auth enabled */}
+                {!loading && resources.some(r => r.auth) && project?.slug && (
+                    <AuthAPIPanel slug={project.slug} />
+                )}
+
                 {/* Resources */}
                 <div className="resources-section">
                     <div className="resources-header-row">
@@ -273,7 +367,7 @@ export default function ProjectView() {
                     )}
                     <div className="resources-list">
                         {resources.map((r, i) => (
-                            <ResourceCard key={r.id} resource={r} index={i} onDelete={deleteResource} />
+                            <ResourceCard key={r.id} resource={r} index={i} onDelete={deleteResource} onToggleAuth={toggleResourceAuth} />
                         ))}
                     </div>
                 </div>

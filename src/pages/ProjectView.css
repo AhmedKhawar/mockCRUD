@@ -57,6 +57,78 @@
 }
 
 /* Section */
+
+/* Auth API Panel */
+.auth-api-panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+
+.auth-api-panel-header {
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--teal-light) 0%, transparent 100%);
+}
+
+.auth-api-panel-icon {
+    font-size: 1.5rem;
+}
+
+.auth-api-panel-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--teal);
+    margin-bottom: 0.1rem;
+}
+
+.auth-api-panel-sub {
+    font-size: 0.85rem;
+    color: var(--text-2);
+}
+
+.auth-api-endpoints {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-api-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    gap: 1rem;
+}
+
+.auth-api-row:last-child {
+    border-bottom: none;
+}
+
+.auth-api-row-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.auth-api-path {
+    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 0.2rem;
+}
+
+.auth-api-desc {
+    font-size: 0.75rem;
+    color: var(--text-3);
+    line-height: 1.4;
+}
+
 .resources-section {
     display: flex;
     flex-direction: column;
@@ -234,6 +306,41 @@
 .chevron-btn:hover {
     background: var(--bg-subtle);
     color: var(--text);
+}
+
+/* Auth toggle pill */
+.auth-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    color: var(--text-3);
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+    font-family: inherit;
+}
+
+.auth-toggle-btn:hover:not(:disabled) {
+    border-color: var(--teal);
+    color: var(--teal);
+}
+
+.auth-toggle-btn.auth-on {
+    background: var(--teal-light);
+    border-color: var(--teal);
+    color: var(--teal);
+}
+
+.auth-toggle-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* ── Full URL bar ── */
