@@ -51,9 +51,23 @@ function AuthAPIPanel({ slug }) {
     const [copiedIdx, setCopiedIdx] = useState(null)
 
     const endpoints = [
-        { method: 'POST', path: `${base}/auth/signup`, desc: 'Register a new user — body: email, password, name, dob' },
-        { method: 'POST', path: `${base}/auth/login`, desc: 'Authenticate and receive a JWT token — body: email, password' },
-        { method: 'POST', path: `${base}/auth/logout`, desc: 'Invalidate the session — requires Bearer token header' },
+        {
+            method: 'POST',
+            path: `${base}/auth/signup`,
+            desc: 'Register a new user.',
+            reqs: ['email', 'password', 'name', 'dob']
+        },
+        {
+            method: 'POST',
+            path: `${base}/auth/login`,
+            desc: <>Authenticate and receive a <span className="jwt-highlight">JWT token</span>.</>,
+            reqs: ['email', 'password']
+        },
+        {
+            method: 'POST',
+            path: `${base}/auth/logout`,
+            desc: <>Invalidate the session — requires <span className="jwt-highlight">Bearer token</span> header.</>
+        },
     ]
 
     const copy = (url, i) => {
@@ -78,7 +92,15 @@ function AuthAPIPanel({ slug }) {
                             <MethodBadge method={ep.method} />
                             <div>
                                 <code className="mono auth-api-path">{ep.path}</code>
-                                <p className="auth-api-desc">{ep.desc}</p>
+                                <div className="auth-api-desc-wrap">
+                                    <p className="auth-api-desc">{ep.desc}</p>
+                                    {ep.reqs && (
+                                        <div className="endpoint-required-list">
+                                            <span className="required-label">Body:</span>
+                                            {ep.reqs.map(r => <span key={r} className="required-pill">{r}</span>)}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                         <button
@@ -217,7 +239,12 @@ function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
                                 </div>
                             )}
                             {ep.requiredFields?.length > 0 && (
-                                <p className="endpoint-required">Required: {ep.requiredFields.join(', ')}</p>
+                                <div className="endpoint-required-list">
+                                    <span className="required-label">Required:</span>
+                                    {ep.requiredFields.map(reqF => (
+                                        <span key={reqF} className="required-pill">{reqF}</span>
+                                    ))}
+                                </div>
                             )}
                         </div>
                     ))}

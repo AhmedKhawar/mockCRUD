@@ -511,3 +511,68 @@
         display: none;
     }
 }
+
+/* JWT Highlight */
+.jwt-highlight {
+    color: var(--teal);
+    font-weight: 700;
+    padding: 0.05rem 0.35rem;
+    background: var(--teal-light);
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin: 0 0.15rem;
+    display: inline-block;
+}
+
+/* Hammer thrust animation for Auth Panel */
+@keyframes hammerThrust {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.97);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translateY(8px) scale(1.01);
+    }
+
+    80% {
+        transform: translateY(-2px) scale(0.995);
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+.auth-api-panel {
+    animation: hammerThrust 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+}
+
+/* Badges for Required Fields */
+.endpoint-required-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+    margin-top: 0.4rem;
+}
+
+.required-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.required-pill {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+    background: var(--badge-delete-bg);
+    color: var(--danger);
+    border-radius: 100px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
