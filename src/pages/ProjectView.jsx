@@ -255,7 +255,10 @@ export default function ProjectView() {
             const data = await res.json()
             if (!res.ok) throw new Error(data.message || 'Failed to load')
             setProject(data.project || null)
-            setResources(data.resources || [])
+            setResources(data.resources?.map(r => ({
+                ...r,
+                mockUrl: r.mockUrl?.replace(/^http:/, 'https:')
+            })) || [])
         } catch (err) { setLoadError(err.message) }
         finally { setLoading(false) }
     }
