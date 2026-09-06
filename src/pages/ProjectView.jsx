@@ -204,13 +204,15 @@ export default function ProjectView() {
             const data = await res.json()
             if (!res.ok) throw new Error(data.message || 'Generation failed')
             setPrompt('')
-            const r = data.resource
-            const mockUrl = `${API}/m/${project?.slug || ''}/${r.name}`
-            show(`"${r.name}" generated!`, 'success')
-            setResources(prev => [
-                { id: r.id, name: r.name, mockUrl, endpoints: r.spec?.endpoints || [] },
-                ...prev,
-            ])
+            const newCards = data.resources.map(r => ({
+                id: r.id,
+                name: r.name,
+                mockUrl: `${API}/m/${project?.slug || ''}/${r.name}`,
+                endpoints: r.spec?.endpoints || [],
+            }))
+            const names = newCards.map(r => `"${r.name}"`).join(', ')
+            show(`${newCards.length > 1 ? `${newCards.length} resources` : names} generated!`, 'success')
+            setResources(prev => [...newCards, ...prev])
         } catch (err) { setGenError(err.message) }
         finally { setGenerating(false) }
     }
