@@ -51,9 +51,9 @@ function AuthAPIPanel({ slug }) {
     const [copiedIdx, setCopiedIdx] = useState(null)
 
     const endpoints = [
-        { method: 'POST', path: `${base}/signup`, desc: 'Register a new user — body: email, password, name, dob' },
-        { method: 'POST', path: `${base}/login`, desc: 'Authenticate and receive a JWT token — body: email, password' },
-        { method: 'POST', path: `${base}/logout`, desc: 'Invalidate the session — requires Bearer token header' },
+        { method: 'POST', path: `${base}/auth/signup`, desc: 'Register a new user — body: email, password, name, dob' },
+        { method: 'POST', path: `${base}/auth/login`, desc: 'Authenticate and receive a JWT token — body: email, password' },
+        { method: 'POST', path: `${base}/auth/logout`, desc: 'Invalidate the session — requires Bearer token header' },
     ]
 
     const copy = (url, i) => {
