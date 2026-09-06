@@ -216,7 +216,7 @@ export default function ProjectView() {
     }
 
     const deleteResource = async (resourceId) => {
-        const res = await fetch(`${API}/api/resource${resourceId}`, {
+        const res = await fetch(`${API}/api/resource/${resourceId}`, {
             method: 'POST',
             headers: { Authorization: `Bearer ${token}` },
         })
