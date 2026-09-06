@@ -47,7 +47,7 @@ function MethodBadge({ method }) {
 }
 
 function AuthAPIPanel({ slug }) {
-    const base = `${API}/m/${slug}`
+    const base = `${API}/${slug}`
     const [copiedIdx, setCopiedIdx] = useState(null)
 
     const endpoints = [
