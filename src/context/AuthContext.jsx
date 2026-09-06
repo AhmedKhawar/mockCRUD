@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
 
     const logout = async () => {
         try {
-            await fetch('http://localhost:8000/api/logout', {
+            await fetch('https://mock-crud-backend.vercel.app/api/logout', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
             })
