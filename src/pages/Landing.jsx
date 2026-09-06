@@ -54,7 +54,7 @@ export default function Landing() {
                         <p className="landing-demo-label">Example mock URL</p>
                         <div className="landing-demo-url">
                             <span className="badge badge-GET">GET</span>
-                            <code className="mono landing-url-text">https://mock-crud-backend.vercel.app/m/<span className="hl">slug</span>/users</code>
+                            <code className="mono landing-url-text">https://mock-crud-blond.vercel.app/m/<span className="hl">slug</span>/users</code>
                         </div>
                     </div>
                 </div>
