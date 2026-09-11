@@ -42,10 +42,14 @@ const CheckIcon = () => (
         <polyline points="20 6 9 17 4 12" />
     </svg>
 )
-const ChevronSmIcon = ({ open }) => (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-        style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.22s ease' }}>
-        <polyline points="6 9 12 15 18 9" />
+const CloseIcon = () => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+)
+const SparkleIcon = () => (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
     </svg>
 )
 
@@ -66,77 +70,72 @@ const PROMPT_TIPS = [
     { icon: '🚫', label: 'Avoid', example: '"how are you" / "president"', note: 'Off-topic or vague single words are rejected.' },
 ]
 
-// ── Persistent reference panel (always visible) ───────────────────────────
-function ReferencePanel() {
-    const [promptOpen, setPromptOpen] = useState(true)
-    const [apiOpen, setApiOpen] = useState(true)
-
+// ── Help sidebar (slide-in drawer) ───────────────────────────────────────
+function HelpSidebar({ open, onClose }) {
     return (
-        <aside className="ref-panel">
-            <p className="ref-panel-title">📚 Reference</p>
+        <>
+            <div
+                className={`sidebar-overlay${open ? ' visible' : ''}`}
+                onClick={onClose}
+                aria-hidden="true"
+            />
+            <aside className={`help-sidebar${open ? ' open' : ''}`} aria-label="Reference">
+                <div className="sidebar-header">
+                    <span className="sidebar-header-title">📚 Reference</span>
+                    <button className="sidebar-close-btn" onClick={onClose} title="Close"><CloseIcon /></button>
+                </div>
 
-            {/* Prompt Guide */}
-            <div className="ref-block">
-                <button className="ref-block-toggle" onClick={() => setPromptOpen(o => !o)}>
-                    <span>✦ Prompt Guide</span>
-                    <ChevronSmIcon open={promptOpen} />
-                </button>
-                {promptOpen && (
-                    <div className="ref-block-body">
-                        <p className="ref-intro">Describe a data model, not a question.</p>
-                        <div className="prompt-tips-list">
-                            {PROMPT_TIPS.map((tip, i) => (
-                                <div key={i} className="prompt-tip">
-                                    <span className="tip-icon">{tip.icon}</span>
-                                    <div>
-                                        <span className="tip-label">{tip.label}</span>
-                                        <code className="tip-example">{tip.example}</code>
-                                        <span className="tip-note">{tip.note}</span>
-                                    </div>
+                {/* Prompt Guide */}
+                <section className="sidebar-section">
+                    <p className="sidebar-section-title">✦ Prompt Guide</p>
+                    <p className="sidebar-section-intro">Describe a data model — not a question or greeting.</p>
+                    <div className="prompt-tips-list">
+                        {PROMPT_TIPS.map((tip, i) => (
+                            <div key={i} className="prompt-tip">
+                                <span className="tip-icon">{tip.icon}</span>
+                                <div>
+                                    <span className="tip-label">{tip.label}</span>
+                                    <code className="tip-example">{tip.example}</code>
+                                    <span className="tip-note">{tip.note}</span>
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* API Reference */}
-            <div className="ref-block">
-                <button className="ref-block-toggle" onClick={() => setApiOpen(o => !o)}>
-                    <span>📖 API Reference</span>
-                    <ChevronSmIcon open={apiOpen} />
-                </button>
-                {apiOpen && (
-                    <div className="ref-block-body">
-                        <p className="ref-intro">Every resource gets a live REST API under your project's fixed <strong>slug</strong>.</p>
-                        <div className="sidebar-endpoint-table">
-                            {DOC_ENDPOINTS.map((ep, i) => (
-                                <div key={i} className="sidebar-ep-row">
-                                    <span className={`badge badge-${ep.method} sidebar-badge`}>{ep.method}</span>
-                                    <code className="mono sidebar-ep-path">{ep.path}</code>
-                                    <span className="sidebar-ep-desc">{ep.desc}</span>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="sidebar-notes">
-                            <div className="sidebar-note">
-                                <span className="sidebar-note-label">ID field</span>
-                                <p>MongoDB auto-generates <code className="mono">_id</code>; the API exposes it as <code className="mono">id</code>. Use it for GET&nbsp;by&nbsp;id, PUT, and DELETE.</p>
                             </div>
-                            <div className="sidebar-note">
-                                <span className="sidebar-note-label">Example</span>
-                                <pre className="sidebar-code">{`POST /m/abc123/customers
+                        ))}
+                    </div>
+                </section>
+
+                <div className="sidebar-divider" />
+
+                {/* API Reference */}
+                <section className="sidebar-section">
+                    <p className="sidebar-section-title">📖 API Reference</p>
+                    <p className="sidebar-section-intro">Every resource gets a live REST API. Your project's <strong>slug</strong> never changes.</p>
+                    <div className="sidebar-endpoint-table">
+                        {DOC_ENDPOINTS.map((ep, i) => (
+                            <div key={i} className="sidebar-ep-row">
+                                <span className={`badge badge-${ep.method} sidebar-badge`}>{ep.method}</span>
+                                <code className="mono sidebar-ep-path">{ep.path}</code>
+                                <span className="sidebar-ep-desc">{ep.desc}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="sidebar-notes">
+                        <div className="sidebar-note">
+                            <span className="sidebar-note-label">ID field</span>
+                            <p>MongoDB auto-generates <code className="mono">_id</code>; the API exposes it as <code className="mono">id</code>. Use it for GET by id, PUT, and DELETE.</p>
+                        </div>
+                        <div className="sidebar-note">
+                            <span className="sidebar-note-label">Example</span>
+                            <pre className="sidebar-code">{`POST /m/abc123/customers
 { "name": "Alice", "email": "a@b.com" }
 → { "id": "64a...", "name": "Alice" }
 
 PUT /m/abc123/customers/64a...
 { "name": "Alice Updated" }`}</pre>
-                            </div>
                         </div>
                     </div>
-                )}
-            </div>
-        </aside>
+                </section>
+            </aside>
+        </>
     )
 }
 
@@ -360,6 +359,9 @@ export default function ProjectView() {
     const [prompt, setPrompt] = useState('')
     const [generating, setGenerating] = useState(false)
     const [genError, setGenError] = useState('')
+    const [sidebarOpen, setSidebarOpen] = useState(false)
+
+    const hintVisible = prompt.trim().length === 0
 
     useEffect(() => {
         if (!token) { navigate('/signin'); return }
@@ -441,63 +443,81 @@ export default function ProjectView() {
     return (
         <>
             <Navbar />
-            <div className="proj-view-layout">
-                {/* ── Left: main content ── */}
-                <div className="container proj-view">
-                    {/* Header */}
-                    <div className="proj-view-header">
-                        <button className="btn btn-outline btn-sm" onClick={() => navigate('/app')}>← Back</button>
-                        <div className="proj-view-title-group">
-                            <h1>{project?.name || '…'}</h1>
-                            {project?.slug && <code className="mono proj-view-slug">/{project.slug}</code>}
-                        </div>
-                    </div>
 
-                    {/* Generate form */}
-                    <form onSubmit={generateResource} className="gen-form card">
-                        <p className="gen-form-label">✦ Add a resource</p>
-                        <textarea className="form-textarea"
-                            placeholder="e.g. 'a customers table with name, email, phone, address and plan'"
-                            value={prompt} onChange={e => setPrompt(e.target.value)}
-                            disabled={generating} rows={2} />
-                        {genError && <div className="alert alert-error">{genError}</div>}
-                        <div className="gen-form-footer">
-                            <button type="submit" className="btn btn-teal"
-                                disabled={generating || !prompt.trim()}>
-                                {generating ? <><span className="spinner" /> Generating…</> : 'Generate resource'}
-                            </button>
-                        </div>
-                    </form>
+            {/* Pull-tab: always visible on right edge */}
+            <button
+                className={`sidebar-pull-tab${sidebarOpen ? ' tab-open' : ''}`}
+                onClick={() => setSidebarOpen(o => !o)}
+                aria-label="Toggle reference panel"
+            >
+                <span className="pull-tab-arrow">{sidebarOpen ? '›' : '‹'}</span>
+                <span className="pull-tab-label">Reference</span>
+            </button>
 
-                    {/* Auth API panel */}
-                    {!loading && resources.some(r => r.auth) && project?.slug && (
-                        <AuthAPIPanel slug={project.slug} />
-                    )}
+            <HelpSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-                    {/* Resources */}
-                    <div className="resources-section">
-                        <div className="resources-header-row">
-                            <p className="section-label">Resources {!loading && `(${resources.length})`}</p>
-                        </div>
-                        {loading && <p className="empty-state">Loading…</p>}
-                        {loadError && <div className="alert alert-error">{loadError}</div>}
-                        {!loading && !loadError && resources.length === 0 && (
-                            <div className="empty-state-box">
-                                <p className="empty-icon">⚡</p>
-                                <p className="empty-title">No resources yet</p>
-                                <p className="empty-desc">Describe a data model above and AI will generate the full CRUD API for it.</p>
-                            </div>
-                        )}
-                        <div className="resources-list">
-                            {resources.map((r, i) => (
-                                <ResourceCard key={r.id} resource={r} index={i} onDelete={deleteResource} onToggleAuth={toggleResourceAuth} />
-                            ))}
-                        </div>
+            <div className="container proj-view">
+                {/* Header */}
+                <div className="proj-view-header">
+                    <button className="btn btn-outline btn-sm" onClick={() => navigate('/app')}>← Back</button>
+                    <div className="proj-view-title-group">
+                        <h1>{project?.name || '…'}</h1>
+                        {project?.slug && <code className="mono proj-view-slug">/{project.slug}</code>}
                     </div>
                 </div>
 
-                {/* ── Right: always-visible reference panel ── */}
-                <ReferencePanel />
+                {/* Generate form */}
+                <form onSubmit={generateResource} className="gen-form card">
+                    <div className="gen-form-top">
+                        <p className="gen-form-label">✦ Add a resource</p>
+                        <button
+                            type="button"
+                            className={`prompt-hint-btn${hintVisible ? '' : ' hidden'}`}
+                            onClick={() => setSidebarOpen(true)}
+                            tabIndex={hintVisible ? 0 : -1}
+                            aria-hidden={!hintVisible}
+                        >
+                            <SparkleIcon /> Want help prompting?
+                        </button>
+                    </div>
+                    <textarea className="form-textarea"
+                        placeholder="e.g. 'a customers table with name, email, phone, address and plan'"
+                        value={prompt} onChange={e => setPrompt(e.target.value)}
+                        disabled={generating} rows={2} />
+                    {genError && <div className="alert alert-error">{genError}</div>}
+                    <div className="gen-form-footer">
+                        <button type="submit" className="btn btn-teal"
+                            disabled={generating || !prompt.trim()}>
+                            {generating ? <><span className="spinner" /> Generating…</> : 'Generate resource'}
+                        </button>
+                    </div>
+                </form>
+
+                {/* Auth API panel */}
+                {!loading && resources.some(r => r.auth) && project?.slug && (
+                    <AuthAPIPanel slug={project.slug} />
+                )}
+
+                {/* Resources */}
+                <div className="resources-section">
+                    <div className="resources-header-row">
+                        <p className="section-label">Resources {!loading && `(${resources.length})`}</p>
+                    </div>
+                    {loading && <p className="empty-state">Loading…</p>}
+                    {loadError && <div className="alert alert-error">{loadError}</div>}
+                    {!loading && !loadError && resources.length === 0 && (
+                        <div className="empty-state-box">
+                            <p className="empty-icon">⚡</p>
+                            <p className="empty-title">No resources yet</p>
+                            <p className="empty-desc">Describe a data model above and AI will generate the full CRUD API for it.</p>
+                        </div>
+                    )}
+                    <div className="resources-list">
+                        {resources.map((r, i) => (
+                            <ResourceCard key={r.id} resource={r} index={i} onDelete={deleteResource} onToggleAuth={toggleResourceAuth} />
+                        ))}
+                    </div>
+                </div>
             </div>
         </>
     )

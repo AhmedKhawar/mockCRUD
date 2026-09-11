@@ -1,22 +1,9 @@
-/* ── Page layout: two-column on wide screens ─────────── */
-.proj-view-layout {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    grid-template-rows: auto;
-    align-items: start;
-    gap: 0;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1.25rem;
-}
-
 .proj-view {
-    padding: 2.5rem 1.5rem 4rem 0;
+    padding: 2.5rem 1.25rem 4rem;
     display: flex;
     flex-direction: column;
     gap: 2rem;
     animation: fadeUp 0.35s ease both;
-    min-width: 0;
 }
 
 /* ── Header ──────────────────────────────────────────────── */
@@ -56,6 +43,14 @@
     border-top: 3px solid var(--teal);
 }
 
+.gen-form-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
 .gen-form-label {
     font-size: 0.72rem;
     font-weight: 800;
@@ -64,78 +59,169 @@
     letter-spacing: 0.12em;
 }
 
+/* "Want help prompting?" inline hint */
+.prompt-hint-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-3);
+    background: none;
+    border: 1px dashed var(--border);
+    border-radius: 100px;
+    padding: 0.2rem 0.65rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.3s ease, color 0.18s, border-color 0.18s;
+    opacity: 1;
+    letter-spacing: 0.02em;
+}
+
+.prompt-hint-btn:hover {
+    color: var(--teal);
+    border-color: var(--teal);
+}
+
+.prompt-hint-btn.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
 .gen-form-footer {
     display: flex;
     justify-content: flex-end;
 }
 
-/* ── Reference panel (always-visible right column) ─────── */
-.ref-panel {
-    position: sticky;
-    top: 1.5rem;
-    padding: 1.5rem 0 4rem 1.5rem;
+/* ── Pull-tab (always visible on right edge) ─────────────── */
+.sidebar-pull-tab {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 198;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    max-height: calc(100vh - 3rem);
-    overflow-y: auto;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.85rem 0.45rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+    cursor: pointer;
+    box-shadow: -3px 0 18px rgba(0, 0, 0, 0.18);
+    transition: background 0.18s, border-color 0.18s, box-shadow 0.18s;
+    font-family: inherit;
+    color: var(--text-2);
 }
 
-.ref-panel-title {
-    font-size: 0.7rem;
+.sidebar-pull-tab:hover,
+.sidebar-pull-tab.tab-open {
+    background: var(--teal-light);
+    border-color: var(--teal);
+    color: var(--teal);
+    box-shadow: -4px 0 24px rgba(13, 148, 136, 0.18);
+}
+
+.pull-tab-arrow {
+    font-size: 1.25rem;
+    line-height: 1;
+    font-weight: 300;
+    transition: transform 0.25s ease;
+}
+
+.sidebar-pull-tab.tab-open .pull-tab-arrow {
+    transform: scaleX(-1);
+}
+
+.pull-tab-label {
+    font-size: 0.6rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--text-3);
-    padding: 0 0.25rem 0.5rem;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 0.25rem;
+    letter-spacing: 0.12em;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
 }
 
-.ref-block {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
+/* ── Sidebar overlay ─────────────────────────────────────── */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 199;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+}
+
+.sidebar-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Help sidebar (slide-in) ─────────────────────────────── */
+.help-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100dvh;
+    width: min(420px, 92vw);
     background: var(--bg-card);
+    border-left: 1px solid var(--border);
+    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.25);
+    z-index: 200;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
 }
 
-.ref-block-toggle {
-    width: 100%;
+.help-sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebar-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.65rem 0.85rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 0.72rem;
-    font-weight: 700;
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg-card);
+    z-index: 1;
+}
+
+.sidebar-header-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
     color: var(--text);
-    text-align: left;
-    letter-spacing: 0.03em;
-    font-family: inherit;
-    transition: background 0.15s;
 }
 
-.ref-block-toggle:hover {
-    background: var(--bg-subtle);
-}
-
-.ref-block-body {
-    padding: 0.75rem 0.85rem;
-    border-top: 1px solid var(--border);
+.sidebar-close-btn {
     display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
-}
-
-.ref-intro {
-    font-size: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: var(--bg-subtle);
+    border-radius: 6px;
+    cursor: pointer;
     color: var(--text-2);
-    line-height: 1.5;
+    transition: background 0.15s, color 0.15s;
 }
 
-/* ── Sidebar sections (shared by ref-panel) ──────────── */
+.sidebar-close-btn:hover {
+    background: var(--badge-delete-bg);
+    color: var(--danger);
+}
+
+/* ── Sidebar sections ────────────────────────────────────── */
 .sidebar-section {
     padding: 1.25rem;
     display: flex;
@@ -155,6 +241,12 @@
     font-size: 0.8rem;
     color: var(--text-2);
     line-height: 1.55;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 1.25rem;
 }
 
 /* ── Prompt tips ─────────────────────────────────────────── */
@@ -328,7 +420,6 @@
     flex-direction: column;
 }
 
-/* Each auth endpoint row — fully responsive */
 .auth-api-row {
     display: flex;
     flex-wrap: wrap;
@@ -351,7 +442,6 @@
     min-width: 0;
 }
 
-/* badge stays fixed width, content grows */
 .auth-api-row-left>.badge {
     flex-shrink: 0;
     margin-top: 0.15rem;
@@ -382,7 +472,6 @@
     line-height: 1.4;
 }
 
-/* copy button always on its own line if row wraps */
 .auth-copy-btn {
     flex-shrink: 0;
     align-self: flex-start;
@@ -562,7 +651,6 @@
     color: var(--text);
 }
 
-/* Auth toggle pill */
 .auth-toggle-btn {
     display: flex;
     align-items: center;
@@ -597,7 +685,6 @@
     cursor: not-allowed;
 }
 
-/* Full URL bar */
 .resource-url-bar {
     display: flex;
     align-items: center;
@@ -644,7 +731,6 @@
     border-color: var(--teal);
 }
 
-/* Confirm bar */
 .confirm-bar {
     display: flex;
     align-items: center;
@@ -692,7 +778,6 @@
     cursor: not-allowed;
 }
 
-/* Endpoints panel */
 .resource-endpoints {
     border-top: 1px solid var(--border);
 }
@@ -746,7 +831,6 @@
     font-weight: 600;
 }
 
-/* Required fields */
 .endpoint-required-list {
     display: flex;
     flex-wrap: wrap;
@@ -774,7 +858,6 @@
     letter-spacing: 0.03em;
 }
 
-/* JWT Highlight */
 .jwt-highlight {
     color: var(--teal);
     font-weight: 700;
@@ -808,35 +891,21 @@
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
-@media (max-width: 900px) {
-    .proj-view-layout {
-        grid-template-columns: 1fr;
-        padding: 0;
-    }
-
+@media (max-width: 600px) {
     .proj-view {
-        padding: 1.5rem 1.25rem 2rem;
-    }
-
-    /* On mobile the ref-panel is not sticky — sits below content */
-    .ref-panel {
-        position: static;
-        padding: 0 1.25rem 2.5rem;
-        max-height: none;
-        overflow-y: visible;
-        border-top: 1px solid var(--border);
-        margin-top: -1rem;
-    }
-
-    .ref-panel-title {
-        padding-top: 1.25rem;
+        padding: 1.5rem 1rem 3rem;
+        gap: 1.5rem;
     }
 
     .url-bar-text {
         font-size: 0.75rem;
     }
 
-    /* Auth panel — stack copy button below path on small screens */
+    .gen-form-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .auth-api-row {
         flex-direction: column;
         gap: 0.65rem;
@@ -848,5 +917,14 @@
 
     .auth-api-path {
         font-size: 0.77rem;
+    }
+
+    /* Pull tab slightly smaller on mobile */
+    .sidebar-pull-tab {
+        padding: 0.65rem 0.4rem;
+    }
+
+    .pull-tab-label {
+        font-size: 0.55rem;
     }
 }
