@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -19,6 +19,7 @@ const METHOD_ORDER = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 
 const resourceInitial = name => name.charAt(0).toUpperCase()
 
+// ── Icons ──────────────────────────────────────────────────────────────────
 const TrashIcon = () => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6" />
@@ -41,13 +42,114 @@ const CheckIcon = () => (
         <polyline points="20 6 9 17 4 12" />
     </svg>
 )
+const CloseIcon = () => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+)
+const SparkleIcon = () => (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+    </svg>
+)
 
+// ── Sidebar content data ───────────────────────────────────────────────────
+const DOC_ENDPOINTS = [
+    { method: 'GET', path: '/m/{slug}/{resource}', desc: 'List all records' },
+    { method: 'GET', path: '/m/{slug}/{resource}/:id', desc: 'Get record by ID' },
+    { method: 'POST', path: '/m/{slug}/{resource}', desc: 'Create a new record' },
+    { method: 'PUT', path: '/m/{slug}/{resource}/:id', desc: 'Replace a record by ID' },
+    { method: 'DELETE', path: '/m/{slug}/{resource}/:id', desc: 'Delete a record by ID' },
+]
+
+const PROMPT_TIPS = [
+    { icon: '🎯', label: 'Name it', example: '"create a product"', note: 'Fields are auto-inferred.' },
+    { icon: '📋', label: 'List fields', example: '"user with name, email, age"', note: 'Exactly those fields are used.' },
+    { icon: '🔢', label: 'Set a count', example: '"course with 5 fields"', note: 'LLM picks the best 5.' },
+    { icon: '🔗', label: 'Describe a system', example: '"student management system"', note: 'Multiple related resources are inferred with foreign keys.' },
+    { icon: '🚫', label: 'Avoid', example: '"how are you" / "president"', note: 'Off-topic or single vague words are rejected.' },
+]
+
+// ── Sidebar ────────────────────────────────────────────────────────────────
+function HelpSidebar({ open, onClose, scrollToPrompt }) {
+    return (
+        <>
+            {/* Overlay */}
+            <div
+                className={`sidebar-overlay${open ? ' visible' : ''}`}
+                onClick={onClose}
+                aria-hidden="true"
+            />
+            <aside className={`help-sidebar${open ? ' open' : ''}`} aria-label="Help sidebar">
+                <div className="sidebar-header">
+                    <span className="sidebar-header-title">📚 Reference</span>
+                    <button className="sidebar-close-btn" onClick={onClose} title="Close"><CloseIcon /></button>
+                </div>
+
+                {/* ── Prompt Guide ─────────────────────── */}
+                <section className="sidebar-section" id="sidebar-prompt-guide">
+                    <p className="sidebar-section-title">✦ Prompt Guide</p>
+                    <p className="sidebar-section-intro">Write prompts that describe a data model, not a question.</p>
+                    <div className="prompt-tips-list">
+                        {PROMPT_TIPS.map((tip, i) => (
+                            <div key={i} className="prompt-tip">
+                                <span className="tip-icon">{tip.icon}</span>
+                                <div>
+                                    <span className="tip-label">{tip.label}</span>
+                                    <code className="tip-example">{tip.example}</code>
+                                    <span className="tip-note">{tip.note}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                <div className="sidebar-divider" />
+
+                {/* ── API Reference ────────────────────── */}
+                <section className="sidebar-section" id="sidebar-api-ref">
+                    <p className="sidebar-section-title">📖 API Reference</p>
+                    <p className="sidebar-section-intro">
+                        Every resource gets a live REST API. Your project's <strong>slug</strong> is fixed and never changes.
+                    </p>
+                    <div className="sidebar-endpoint-table">
+                        {DOC_ENDPOINTS.map((ep, i) => (
+                            <div key={i} className="sidebar-ep-row">
+                                <span className={`badge badge-${ep.method} sidebar-badge`}>{ep.method}</span>
+                                <code className="mono sidebar-ep-path">{ep.path}</code>
+                                <span className="sidebar-ep-desc">{ep.desc}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="sidebar-notes">
+                        <div className="sidebar-note">
+                            <span className="sidebar-note-label">ID field</span>
+                            <p>MongoDB auto-generates <code className="mono">_id</code>; the API exposes it as <code className="mono">id</code> in all responses. Use it for GET-by-id, PUT, and DELETE.</p>
+                        </div>
+                        <div className="sidebar-note">
+                            <span className="sidebar-note-label">Example</span>
+                            <pre className="sidebar-code">{`POST /m/abc123/customers
+{ "name": "Alice", "email": "a@b.com" }
+→ { "id": "64a...", "name": "Alice" }
+
+PUT /m/abc123/customers/64a...
+{ "name": "Alice Updated" }`}</pre>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </>
+    )
+}
+
+// ── Method badge ───────────────────────────────────────────────────────────
 function MethodBadge({ method }) {
     return <span className={`badge badge-${method}`}>{method}</span>
 }
 
+// ── Auth API Panel ─────────────────────────────────────────────────────────
 function AuthAPIPanel({ slug }) {
-    const base = `${API}/${slug}`
+    const base = `${API}/m/${slug}`
     const [copiedIdx, setCopiedIdx] = useState(null)
 
     const endpoints = [
@@ -60,13 +162,13 @@ function AuthAPIPanel({ slug }) {
         {
             method: 'POST',
             path: `${base}/auth/login`,
-            desc: <>Authenticate and receive a <span className="jwt-highlight">JWT token</span>.</>,
+            desc: <><span className="jwt-highlight">JWT token</span> — authenticate with email + password.</>,
             reqs: ['email', 'password']
         },
         {
             method: 'POST',
             path: `${base}/auth/logout`,
-            desc: <>Invalidate the session — requires <span className="jwt-highlight">Bearer token</span> header.</>
+            desc: <>Invalidate session — requires <span className="jwt-highlight">Bearer token</span> header.</>,
         },
     ]
 
@@ -90,7 +192,7 @@ function AuthAPIPanel({ slug }) {
                     <div key={i} className="auth-api-row">
                         <div className="auth-api-row-left">
                             <MethodBadge method={ep.method} />
-                            <div>
+                            <div className="auth-api-row-info">
                                 <code className="mono auth-api-path">{ep.path}</code>
                                 <div className="auth-api-desc-wrap">
                                     <p className="auth-api-desc">{ep.desc}</p>
@@ -104,7 +206,7 @@ function AuthAPIPanel({ slug }) {
                             </div>
                         </div>
                         <button
-                            className={`url-copy-btn${copiedIdx === i ? ' copied' : ''}`}
+                            className={`url-copy-btn auth-copy-btn${copiedIdx === i ? ' copied' : ''}`}
                             onClick={() => copy(ep.path, i)}
                             title="Copy URL"
                         >
@@ -117,6 +219,7 @@ function AuthAPIPanel({ slug }) {
     )
 }
 
+// ── Resource Card ──────────────────────────────────────────────────────────
 function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
     const [open, setOpen] = useState(false)
     const [confirming, setConfirming] = useState(false)
@@ -146,20 +249,16 @@ function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
         setTogglingAuth(false)
     }
 
-    // sort endpoints by method order
     const endpoints = [...(resource.endpoints || [])].sort(
         (a, b) => METHOD_ORDER.indexOf(a.method) - METHOD_ORDER.indexOf(b.method)
     )
 
     return (
         <div className="resource-card" style={{ '--card-from': color.from, '--card-to': color.to }}>
-            {/* Gradient top bar */}
             <div className="resource-topbar" />
 
-            {/* Header */}
             <div className="resource-card-inner">
                 <div className="resource-meta-row">
-                    {/* Icon + name */}
                     <div className="resource-identity">
                         <div className="resource-icon" style={{ background: `linear-gradient(135deg, ${color.from}22, ${color.to}22)`, color: color.from }}>
                             {resourceInitial(resource.name)}
@@ -175,9 +274,7 @@ function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
                         </div>
                     </div>
 
-                    {/* Actions */}
                     <div className="resource-actions">
-                        {/* Auth toggle */}
                         <button
                             className={`auth-toggle-btn${authEnabled ? ' auth-on' : ''}`}
                             onClick={handleToggleAuth}
@@ -197,7 +294,6 @@ function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
                     </div>
                 </div>
 
-                {/* Full URL bar */}
                 <div className="resource-url-bar">
                     <span className="url-bar-text mono">{resource.mockUrl}</span>
                     <button className={`url-copy-btn${copied ? ' copied' : ''}`} onClick={copy} title="Copy URL">
@@ -206,7 +302,6 @@ function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
                 </div>
             </div>
 
-            {/* Confirm delete */}
             {confirming && (
                 <div className="confirm-bar">
                     <span className="confirm-bar-msg">Delete "{resource.name}" and all mock data?</span>
@@ -219,7 +314,6 @@ function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
                 </div>
             )}
 
-            {/* Expanded endpoints */}
             {open && endpoints.length > 0 && (
                 <div className="resource-endpoints">
                     {endpoints.map((ep, i) => (
@@ -254,6 +348,7 @@ function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
     )
 }
 
+// ── Main view ──────────────────────────────────────────────────────────────
 export default function ProjectView() {
     const { projectId } = useParams()
     const { token } = useAuth()
@@ -267,6 +362,10 @@ export default function ProjectView() {
     const [prompt, setPrompt] = useState('')
     const [generating, setGenerating] = useState(false)
     const [genError, setGenError] = useState('')
+    const [sidebarOpen, setSidebarOpen] = useState(false)
+
+    // Fade the "want help?" hint once the user starts typing
+    const hintVisible = prompt.trim().length === 0
 
     useEffect(() => {
         if (!token) { navigate('/signin'); return }
@@ -337,9 +436,7 @@ export default function ProjectView() {
             const data = await res.json()
             if (!res.ok) { show(data.message || 'Toggle failed', 'error'); return null }
             show(data.message, data.auth ? 'success' : 'info')
-
             setResources(prev => prev.map(r => r.id === resourceId ? { ...r, auth: data.auth } : r))
-
             return data.auth
         } catch {
             show('Toggle failed', 'error')
@@ -350,6 +447,11 @@ export default function ProjectView() {
     return (
         <>
             <Navbar />
+            <HelpSidebar
+                open={sidebarOpen}
+                onClose={() => setSidebarOpen(false)}
+            />
+
             <div className="container proj-view">
                 {/* Header */}
                 <div className="proj-view-header">
@@ -362,7 +464,20 @@ export default function ProjectView() {
 
                 {/* Generate form */}
                 <form onSubmit={generateResource} className="gen-form card">
-                    <p className="gen-form-label">✦ Add a resource</p>
+                    <div className="gen-form-top">
+                        <p className="gen-form-label">✦ Add a resource</p>
+                        {/* Prompt hint — fades when user starts typing */}
+                        <button
+                            type="button"
+                            className={`prompt-hint-btn${hintVisible ? '' : ' hidden'}`}
+                            onClick={() => setSidebarOpen(true)}
+                            tabIndex={hintVisible ? 0 : -1}
+                            aria-hidden={!hintVisible}
+                        >
+                            <SparkleIcon />
+                            Want help prompting?
+                        </button>
+                    </div>
                     <textarea className="form-textarea"
                         placeholder="e.g. 'a customers table with name, email, phone, address and plan'"
                         value={prompt} onChange={e => setPrompt(e.target.value)}
@@ -376,7 +491,7 @@ export default function ProjectView() {
                     </div>
                 </form>
 
-                {/* Auth API panel — visible when any resource has auth enabled */}
+                {/* Auth API panel */}
                 {!loading && resources.some(r => r.auth) && project?.slug && (
                     <AuthAPIPanel slug={project.slug} />
                 )}
