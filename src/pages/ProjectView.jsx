@@ -16,7 +16,6 @@ const ACCENT_COLORS = [
 ]
 
 const METHOD_ORDER = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
-
 const resourceInitial = name => name.charAt(0).toUpperCase()
 
 // ── Icons ──────────────────────────────────────────────────────────────────
@@ -27,7 +26,7 @@ const TrashIcon = () => (
     </svg>
 )
 const ChevronIcon = ({ open }) => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
         style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.22s ease' }}>
         <polyline points="6 9 12 15 18 9" />
     </svg>
@@ -48,6 +47,9 @@ const SparkleIcon = () => (
     </svg>
 )
 
+// Datatypes for auth fields
+const FIELD_TYPES = { email: 'String', password: 'String', name: 'String', dob: 'Date' }
+
 // ── Method badge ───────────────────────────────────────────────────────────
 function MethodBadge({ method }) {
     return <span className={`badge badge-${method}`}>{method}</span>
@@ -56,32 +58,32 @@ function MethodBadge({ method }) {
 // ── Auth API Panel ─────────────────────────────────────────────────────────
 function AuthAPIPanel({ slug }) {
     const base = `${API}/m/${slug}`
-    const [copiedIdx, setCopiedIdx] = useState(null)
+    const [copied, setCopied] = useState(null)
 
     const endpoints = [
         {
             method: 'POST',
             path: `${base}/auth/signup`,
             desc: 'Register a new user.',
-            reqs: ['email', 'password', 'name', 'dob']
+            reqs: ['email', 'password', 'name', 'dob'],
         },
         {
             method: 'POST',
             path: `${base}/auth/login`,
             desc: <><span className="jwt-highlight">JWT token</span> — authenticate with email + password.</>,
-            reqs: ['email', 'password']
+            reqs: ['email', 'password'],
         },
         {
             method: 'POST',
             path: `${base}/auth/logout`,
-            desc: <>Invalidate session — requires <span className="jwt-highlight">Bearer token</span> header.</>,
+            desc: <>Invalidate session — requires <span className="jwt-highlight bearer">Bearer token</span> header.</>,
         },
     ]
 
     const copy = (url, i) => {
         navigator.clipboard.writeText(url)
-        setCopiedIdx(i)
-        setTimeout(() => setCopiedIdx(null), 1800)
+        setCopied(i)
+        setTimeout(() => setCopied(null), 1800)
     }
 
     return (
@@ -96,28 +98,32 @@ function AuthAPIPanel({ slug }) {
             <div className="auth-api-endpoints">
                 {endpoints.map((ep, i) => (
                     <div key={i} className="auth-api-row">
-                        <div className="auth-api-row-left">
+                        <div className="auth-api-row-top">
                             <MethodBadge method={ep.method} />
-                            <div className="auth-api-row-info">
-                                <code className="mono auth-api-path">{ep.path}</code>
-                                <div className="auth-api-desc-wrap">
-                                    <p className="auth-api-desc">{ep.desc}</p>
-                                    {ep.reqs && (
-                                        <div className="endpoint-required-list">
-                                            <span className="required-label">Body:</span>
-                                            {ep.reqs.map(r => <span key={r} className="required-pill">{r}</span>)}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            <p className="auth-api-desc">{ep.desc}</p>
                         </div>
-                        <button
-                            className={`url-copy-btn auth-copy-btn${copiedIdx === i ? ' copied' : ''}`}
-                            onClick={() => copy(ep.path, i)}
-                            title="Copy URL"
-                        >
-                            {copiedIdx === i ? <><CheckIcon /> Copied!</> : <><CopyIcon /> Copy</>}
-                        </button>
+                        {/* URL bar styled same as resource card */}
+                        <div className="auth-url-bar">
+                            <code className="mono auth-api-path">{ep.path}</code>
+                            <button
+                                className={`url-copy-btn${copied === i ? ' copied' : ''}`}
+                                onClick={() => copy(ep.path, i)}
+                                title="Copy URL"
+                            >
+                                {copied === i ? <><CheckIcon /> Copied!</> : <><CopyIcon /> Copy</>}
+                            </button>
+                        </div>
+                        {ep.reqs && (
+                            <div className="endpoint-required-list">
+                                <span className="required-label">Body:</span>
+                                {ep.reqs.map(r => (
+                                    <span key={r} className="required-pill">
+                                        {r}
+                                        <span className="pill-type">{FIELD_TYPES[r] ?? 'String'}</span>
+                                    </span>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
@@ -164,40 +170,41 @@ function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
             <div className="resource-topbar" />
 
             <div className="resource-card-inner">
-                {/* Identity row: icon + name + chips */}
-                <div className="resource-identity">
-                    <div className="resource-icon" style={{ background: `linear-gradient(135deg, ${color.from}22, ${color.to}22)`, color: color.from }}>
-                        {resourceInitial(resource.name)}
-                    </div>
-                    <div className="resource-name-group">
-                        <h3 className="resource-name">{resource.name}</h3>
-                        <div className="endpoint-chips">
-                            {endpoints.slice(0, 5).map((ep, i) => (
-                                <span key={i} className={`chip badge-${ep.method}`}>{ep.method}</span>
-                            ))}
-                            {endpoints.length > 5 && <span className="chip-more">+{endpoints.length - 5}</span>}
+                {/* Top row: identity LEFT + actions RIGHT */}
+                <div className="resource-meta-row">
+                    <div className="resource-identity">
+                        <div className="resource-icon" style={{ background: `linear-gradient(135deg, ${color.from}22, ${color.to}22)`, color: color.from }}>
+                            {resourceInitial(resource.name)}
+                        </div>
+                        <div className="resource-name-group">
+                            <h3 className="resource-name">{resource.name}</h3>
+                            <div className="endpoint-chips">
+                                {endpoints.slice(0, 5).map((ep, i) => (
+                                    <span key={i} className={`chip badge-${ep.method}`}>{ep.method}</span>
+                                ))}
+                                {endpoints.length > 5 && <span className="chip-more">+{endpoints.length - 5}</span>}
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Action row — always below identity, cleaner on mobile */}
-                <div className="resource-actions">
-                    <button
-                        className={`auth-toggle-btn${authEnabled ? ' auth-on' : ''}`}
-                        onClick={handleToggleAuth}
-                        disabled={togglingAuth}
-                        title={authEnabled ? 'Auth enabled — click to disable' : 'Auth disabled — click to enable'}
-                    >
-                        {togglingAuth
-                            ? <span className="spinner" />
-                            : <>{authEnabled ? '🔒' : '🔓'} Auth</>}
-                    </button>
-                    <button className="icon-btn bin-btn" onClick={() => setConfirming(c => !c)} title="Delete">
-                        <TrashIcon />
-                    </button>
-                    <button className="icon-btn chevron-btn" onClick={() => setOpen(o => !o)}>
-                        <ChevronIcon open={open} />
-                    </button>
+                    {/* Action buttons — top right */}
+                    <div className="resource-actions">
+                        <button
+                            className={`auth-toggle-btn${authEnabled ? ' auth-on' : ''}`}
+                            onClick={handleToggleAuth}
+                            disabled={togglingAuth}
+                            title={authEnabled ? 'Auth enabled — click to disable' : 'Click to enable auth'}
+                        >
+                            {togglingAuth ? <span className="spinner" /> : <>{authEnabled ? '🔒' : '🔓'} Auth</>}
+                        </button>
+                        <button className="icon-btn bin-btn" onClick={() => setConfirming(c => !c)} title="Delete">
+                            <TrashIcon />
+                        </button>
+                        {/* Big chevron */}
+                        <button className="icon-btn chevron-btn big-chevron" onClick={() => setOpen(o => !o)} title={open ? 'Collapse' : 'Expand'}>
+                            <ChevronIcon open={open} />
+                        </button>
+                    </div>
                 </div>
 
                 <div className="resource-url-bar">
@@ -270,7 +277,6 @@ export default function ProjectView() {
     const [generating, setGenerating] = useState(false)
     const [genError, setGenError] = useState('')
 
-    // prompt stores only user's suffix; the textarea displays PREFIX+prompt
     const handlePromptChange = e => {
         const val = e.target.value
         if (!val.startsWith(PREFIX)) {
@@ -280,7 +286,8 @@ export default function ProjectView() {
         }
     }
 
-    const hintVisible = prompt.trim().length === 0
+    // Ghost text and hint button are visible only when suffix is empty
+    const ghostVisible = prompt.trim().length === 0
 
     useEffect(() => {
         if (!token) { navigate('/signin'); return }
@@ -378,35 +385,35 @@ export default function ProjectView() {
                 <form onSubmit={generateResource} className="gen-form card">
                     <div className="gen-form-top">
                         <p className="gen-form-label">✦ Add a resource</p>
-                        {/* "Want help prompting?" — fades when user is typing */}
+                        {/* Fades when user starts typing */}
                         <button
                             type="button"
-                            className={`prompt-hint-btn${hintVisible ? '' : ' hidden'}`}
-                            onClick={() => {
-                                // Open sidebar prompt via Navbar — we dispatch a custom event
-                                window.dispatchEvent(new CustomEvent('open-prompt-dialog'))
-                            }}
-                            tabIndex={hintVisible ? 0 : -1}
-                            aria-hidden={!hintVisible}
+                            className={`prompt-hint-btn${ghostVisible ? '' : ' hidden'}`}
+                            onClick={() => window.dispatchEvent(new CustomEvent('open-prompt-dialog'))}
+                            tabIndex={ghostVisible ? 0 : -1}
+                            aria-hidden={!ghostVisible}
                         >
                             <SparkleIcon /> Need help prompting?
                         </button>
                     </div>
+
+                    {/* Textarea with ghost overlay */}
                     <div className="prompt-input-wrap">
                         <textarea
                             className="form-textarea prompt-textarea"
-                            placeholder={`a table with name, email, role and status…`}
                             value={PREFIX + prompt}
                             onChange={handlePromptChange}
                             disabled={generating}
-                            rows={2}
+                            rows={3}
                             spellCheck={false}
                         />
-                        {/* Helper line that fades when user types */}
-                        <p className={`prompt-helper-line${hintVisible ? '' : ' hidden'}`}>
-                            e.g. "Create a blog post with title, body, author and tags"
-                        </p>
+                        {/* Ghost text — mirrors textarea content, fades when user types */}
+                        <div className={`prompt-ghost-overlay${ghostVisible ? '' : ' hidden'}`} aria-hidden="true">
+                            <span className="ghost-prefix">Create </span>
+                            <span className="ghost-hint">a blog endpoint with title, body, author and tags…</span>
+                        </div>
                     </div>
+
                     {genError && <div className="alert alert-error">{genError}</div>}
                     <div className="gen-form-footer">
                         <button type="submit" className="btn btn-teal"
