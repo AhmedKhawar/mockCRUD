@@ -356,10 +356,22 @@ export default function ProjectView() {
     const [resources, setResources] = useState([])
     const [loading, setLoading] = useState(true)
     const [loadError, setLoadError] = useState('')
+    const PREFIX = 'Create '
     const [prompt, setPrompt] = useState('')
     const [generating, setGenerating] = useState(false)
     const [genError, setGenError] = useState('')
     const [sidebarOpen, setSidebarOpen] = useState(false)
+
+    // prompt stores only user's suffix; the textarea displays PREFIX+prompt
+    const handlePromptChange = e => {
+        const val = e.target.value
+        if (!val.startsWith(PREFIX)) {
+            // user deleted into prefix — restore it, keep whatever came after
+            setPrompt('')
+        } else {
+            setPrompt(val.slice(PREFIX.length))
+        }
+    }
 
     const hintVisible = prompt.trim().length === 0
 
@@ -389,11 +401,12 @@ export default function ProjectView() {
         e.preventDefault()
         if (!prompt.trim()) return
         setGenError(''); setGenerating(true)
+        const fullDescription = PREFIX + prompt
         try {
             const res = await fetch(`${API}/api/resource`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ projectId, description: prompt }),
+                body: JSON.stringify({ projectId, description: fullDescription }),
             })
             const data = await res.json()
             if (!res.ok) throw new Error(data.message || 'Generation failed')
@@ -480,10 +493,17 @@ export default function ProjectView() {
                             <SparkleIcon /> Want help prompting?
                         </button>
                     </div>
-                    <textarea className="form-textarea"
-                        placeholder="e.g. 'a customers table with name, email, phone, address and plan'"
-                        value={prompt} onChange={e => setPrompt(e.target.value)}
-                        disabled={generating} rows={2} />
+                    <div className="prompt-input-wrap">
+                        <textarea
+                            className="form-textarea prompt-textarea"
+                            placeholder={`a table with name, email, role and status…`}
+                            value={PREFIX + prompt}
+                            onChange={handlePromptChange}
+                            disabled={generating}
+                            rows={2}
+                            spellCheck={false}
+                        />
+                    </div>
                     {genError && <div className="alert alert-error">{genError}</div>}
                     <div className="gen-form-footer">
                         <button type="submit" className="btn btn-teal"

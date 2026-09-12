@@ -93,6 +93,18 @@
     justify-content: flex-end;
 }
 
+/* ── Prompt textarea with locked prefix ──────────────────── */
+.prompt-input-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.prompt-textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
 /* ── Pull-tab (always visible on right edge) ─────────────── */
 .sidebar-pull-tab {
     position: fixed;
@@ -893,12 +905,13 @@
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 600px) {
     .proj-view {
-        padding: 1.5rem 1rem 3rem;
-        gap: 1.5rem;
+        padding: 1.5rem 0.75rem 3rem;
+        gap: 1.25rem;
     }
 
     .url-bar-text {
-        font-size: 0.75rem;
+        font-size: 0.73rem;
+        word-break: break-all;
     }
 
     .gen-form-top {
@@ -906,6 +919,7 @@
         align-items: flex-start;
     }
 
+    /* Auth API panel — stack on mobile */
     .auth-api-row {
         flex-direction: column;
         gap: 0.65rem;
@@ -916,15 +930,64 @@
     }
 
     .auth-api-path {
-        font-size: 0.77rem;
+        font-size: 0.72rem;
+        word-break: break-all;
     }
 
-    /* Pull tab slightly smaller on mobile */
+    .auth-api-panel-sub {
+        font-size: 0.78rem;
+    }
+
+    /* Resource card actions — keep from overflowing */
+    .resource-meta-row {
+        flex-wrap: wrap;
+        gap: 0.65rem;
+    }
+
+    .resource-actions {
+        gap: 0.2rem;
+    }
+
+    /* Shrink auth toggle label text on small screens */
+    .auth-toggle-btn {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.45rem;
+    }
+
+    .resource-url-bar {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .url-copy-btn {
+        padding: 0.25rem 0.55rem;
+        font-size: 0.7rem;
+    }
+
+    /* Pull tab — icon-only on very small screens, compact */
     .sidebar-pull-tab {
-        padding: 0.65rem 0.4rem;
+        padding: 0.55rem 0.38rem;
+        gap: 0.3rem;
     }
 
     .pull-tab-label {
-        font-size: 0.55rem;
+        font-size: 0.5rem;
+        letter-spacing: 0.08em;
+    }
+
+    .pull-tab-arrow {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+
+    /* On very small phones hide the 'Reference' label text, show only arrow */
+    .pull-tab-label {
+        display: none;
+    }
+
+    .sidebar-pull-tab {
+        padding: 0.5rem 0.42rem;
     }
 }
