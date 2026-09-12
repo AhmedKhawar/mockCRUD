@@ -1,27 +1,17 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import NavSidebar from './NavSidebar'
 import { ReferenceDialog, PromptDialog } from './Dialogs'
 import './NavSidebar.css'
 
-// The actual favicon.svg icon rendered inline
-const FaviconLogo = () => (
-    <svg width="28" height="28" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-        <defs>
-            <linearGradient id="mcGrad" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#0EA5E9" />
-                <stop offset="1" stopColor="#10B981" />
-            </linearGradient>
-        </defs>
-        <rect width="64" height="64" rx="16" fill="#0F172A" />
-        <path
-            d="M16 44V22L26 34L32 27L38 34L48 22V44"
-            stroke="url(#mcGrad)"
-            strokeWidth="5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-        <circle cx="32" cy="44" r="3.5" fill="#10B981" />
+// The original 4-dot grid Logo block
+const LogoIcon = () => (
+    <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#0d9488" />
+        <rect x="7" y="7" width="7" height="7" rx="2" fill="white" opacity="0.95" />
+        <rect x="18" y="7" width="7" height="7" rx="2" fill="white" opacity="0.7" />
+        <rect x="7" y="18" width="7" height="7" rx="2" fill="white" opacity="0.7" />
+        <rect x="18" y="18" width="7" height="7" rx="2" fill="white" opacity="0.45" />
     </svg>
 )
 
@@ -47,28 +37,16 @@ export default function Navbar() {
     return (
         <>
             <nav className="navbar">
-                {/* Logo — click to open sidebar */}
+                {/* Logo — click to open sidebar. Hamburger on right removed. */}
                 <button
                     className="navbar-logo-btn"
                     onClick={() => setSidebarOpen(true)}
                     aria-label="Open menu"
                     title="Open navigation"
                 >
-                    <FaviconLogo />
-                    <span className="navbar-wordmark">Mock<span>Crud</span></span>
+                    <LogoIcon />
+                    <span className="navbar-wordmark">Mock<span style={{ color: 'var(--text-2)', fontWeight: 500 }}>Crud</span></span>
                     <span className="navbar-tagline">· instant mock APIs</span>
-                </button>
-
-                {/* Hamburger — also opens sidebar */}
-                <button
-                    className="hamburger-btn"
-                    onClick={() => setSidebarOpen(true)}
-                    aria-label="Open menu"
-                    title="Menu"
-                >
-                    <span className="hamburger-line" />
-                    <span className="hamburger-line" />
-                    <span className="hamburger-line" />
                 </button>
             </nav>
 

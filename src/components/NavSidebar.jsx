@@ -3,20 +3,18 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 
+const API = 'https://mock-crud-backend.vercel.app'
+
 // ── Icons ─────────────────────────────────────────────────────────────────
-const HomeIcon = () => (
+const DashboardIcon = () => (
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
+        <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+        <rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
     </svg>
 )
 const FolderIcon = () => (
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-    </svg>
-)
-const PlusIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
     </svg>
 )
 const BookIcon = () => (
@@ -68,33 +66,52 @@ const CloseIcon = () => (
     </svg>
 )
 const ChevronRightIcon = () => (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="9 18 15 12 9 6" />
     </svg>
 )
+const DotIcon = () => (
+    <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'currentColor', opacity: 0.7 }} />
+)
 
-// Actual favicon logo
-const FaviconLogo = () => (
-    <svg width="26" height="26" viewBox="0 0 64 64" fill="none">
-        <defs>
-            <linearGradient id="mcGradSidebar" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#0EA5E9" />
-                <stop offset="1" stopColor="#10B981" />
-            </linearGradient>
-        </defs>
-        <rect width="64" height="64" rx="16" fill="#0F172A" />
-        <path d="M16 44V22L26 34L32 27L38 34L48 22V44" stroke="url(#mcGradSidebar)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="32" cy="44" r="3.5" fill="#10B981" />
+// The original 4-dot grid Logo block
+const LogoIcon = () => (
+    <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#0d9488" />
+        <rect x="7" y="7" width="7" height="7" rx="2" fill="white" opacity="0.95" />
+        <rect x="18" y="7" width="7" height="7" rx="2" fill="white" opacity="0.7" />
+        <rect x="7" y="18" width="7" height="7" rx="2" fill="white" opacity="0.7" />
+        <rect x="18" y="18" width="7" height="7" rx="2" fill="white" opacity="0.45" />
     </svg>
 )
 
 // ── Main Component ─────────────────────────────────────────────────────────
 export default function NavSidebar({ open, onClose, currentPath, dark, onToggleDark, onOpenReference, onOpenPrompt }) {
-    const { user, logout } = useAuth()
+    const { user, token, logout } = useAuth()
     const { show } = useToast()
     const navigate = useNavigate()
     const location = useLocation()
     const path = currentPath || location.pathname
+
+    const [projects, setProjects] = useState([])
+    const [projectsOpen, setProjectsOpen] = useState(true)
+    const [openProjectIds, setOpenProjectIds] = useState(new Set())
+
+    // Fetch user projects when sidebar is opened + user is logged in
+    useEffect(() => {
+        if (!open || !token) return
+        fetchProjects()
+    }, [open, token])
+
+    const fetchProjects = async () => {
+        try {
+            const res = await fetch(`${API}/api/project`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            const data = await res.json()
+            if (res.ok) setProjects(data.projects || [])
+        } catch (err) { }
+    }
 
     // Close on Escape
     useEffect(() => {
@@ -119,27 +136,34 @@ export default function NavSidebar({ open, onClose, currentPath, dark, onToggleD
         navigate('/')
     }
 
-    // Active detection
+    const toggleProject = (id, e) => {
+        e.stopPropagation()
+        setOpenProjectIds(prev => {
+            const next = new Set(prev)
+            if (next.has(id)) next.delete(id)
+            else next.add(id)
+            return next
+        })
+    }
+
     const isDashboard = path === '/app'
-    const isProject = path.startsWith('/app/') && path !== '/app'
+    const isAnyProjectActive = path.startsWith('/app/') && path !== '/app'
 
     return (
         <>
-            {/* Backdrop */}
             <div
                 className={`nav-sidebar-overlay${open ? ' visible' : ''}`}
                 onClick={onClose}
                 aria-hidden="true"
             />
 
-            {/* Sidebar panel */}
             <aside className={`nav-sidebar${open ? ' open' : ''}`} aria-label="Navigation">
 
                 {/* Header */}
                 <div className="nav-sidebar-header">
-                    <div className="nav-sidebar-brand">
-                        <FaviconLogo />
-                        <span className="nav-sidebar-brand-text">Mock<span>Crud</span></span>
+                    <div className="nav-sidebar-brand" onClick={() => go('/')} style={{ cursor: 'pointer' }}>
+                        <LogoIcon />
+                        <span className="nav-sidebar-brand-text">Mock<span style={{ color: 'var(--text-2)', fontWeight: 500 }}>Crud</span></span>
                     </div>
                     <button className="nav-sidebar-close" onClick={onClose} title="Close menu">
                         <CloseIcon />
@@ -163,54 +187,69 @@ export default function NavSidebar({ open, onClose, currentPath, dark, onToggleD
                 <nav className="nav-sidebar-nav">
                     <p className="nav-sidebar-section-label">Navigation</p>
 
-                    {/* Home group */}
-                    <div className={`nav-group${isDashboard ? ' nav-group-active' : ''}`}>
-                        <div className="nav-group-header">
-                            <span className="nav-sidebar-item-icon"><HomeIcon /></span>
-                            <span className="nav-group-label">Home</span>
-                            {isDashboard && <span className="nav-active-badge">Current</span>}
-                        </div>
-                        <div className="nav-group-children">
-                            <button className="nav-child-btn" onClick={() => go('/app')}>
-                                <ChevronRightIcon />
-                                <span>Open Dashboard</span>
-                            </button>
-                        </div>
-                    </div>
+                    <button className={`nav-sidebar-item${isDashboard ? ' active' : ''}`} onClick={() => go('/app')}>
+                        <span className="nav-sidebar-item-icon"><DashboardIcon /></span>
+                        <span className="nav-sidebar-item-label">Dashboard</span>
+                        {isDashboard && <span className="nav-sidebar-item-dot" />}
+                    </button>
 
-                    {/* Projects group */}
-                    <div className={`nav-group${isProject ? ' nav-group-active' : ''}`}>
-                        <div className="nav-group-header">
+                    {/* Expandable Projects Folder */}
+                    {user && (
+                        <div className={`nav-group${isAnyProjectActive ? ' active' : ''}`}>
+                            <button className={`nav-sidebar-item projects-root-btn${isAnyProjectActive ? ' active' : ''}`} onClick={() => setProjectsOpen(o => !o)}>
+                                <span className="nav-sidebar-item-icon"><FolderIcon /></span>
+                                <span className="nav-sidebar-item-label">Projects</span>
+                                <span className="nav-group-chevron" style={{ transform: projectsOpen ? 'rotate(90deg)' : 'none' }}>
+                                    <ChevronRightIcon />
+                                </span>
+                            </button>
+
+                            {projectsOpen && (
+                                <div className="nav-tree">
+                                    {projects.map(p => {
+                                        const isThisProject = path === `/app/${p.id}`
+                                        const isOpen = openProjectIds.has(p.id) || isThisProject
+                                        return (
+                                            <div key={p.id} className="nav-tree-item">
+                                                <button className={`nav-tree-btn${isThisProject ? ' active' : ''}`} onClick={(e) => toggleProject(p.id, e)}>
+                                                    <span className="nav-group-chevron" style={{ transform: isOpen ? 'rotate(90deg)' : 'none' }}><ChevronRightIcon /></span>
+                                                    <FolderIcon />
+                                                    <span className="nav-tree-label">{p.name || 'Untitled'}</span>
+                                                </button>
+                                                {isOpen && (
+                                                    <div className="nav-tree-children">
+                                                        <button className={`nav-tree-child-btn${isThisProject ? ' active-child' : ''}`} onClick={() => go(`/app/${p.id}`)}>
+                                                            <DotIcon />
+                                                            <span>Resource Page</span>
+                                                            <DotIcon />
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )
+                                    })}
+                                    {projects.length === 0 && (
+                                        <div className="nav-tree-empty">No projects yet</div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {!user && (
+                        <button className="nav-sidebar-item" onClick={() => go('/app')}>
                             <span className="nav-sidebar-item-icon"><FolderIcon /></span>
-                            <span className="nav-group-label">Projects</span>
-                            {isProject && <span className="nav-active-badge">Current</span>}
-                        </div>
-                        <div className="nav-group-children">
-                            <button className="nav-child-btn" onClick={() => go('/app')}>
-                                <PlusIcon />
-                                <span>New Project</span>
-                            </button>
-                            <button className="nav-child-btn" onClick={() => go('/projects')}>
-                                <ChevronRightIcon />
-                                <span>All Projects</span>
-                            </button>
-                        </div>
-                    </div>
+                            <span className="nav-sidebar-item-label">Projects</span>
+                        </button>
+                    )}
 
                     <div className="nav-sidebar-divider" style={{ margin: '0.75rem 0' }} />
-                    <p className="nav-sidebar-section-label">Tools</p>
+                    <p className="nav-sidebar-section-label">Preferences & Tools</p>
 
-                    <button className="nav-sidebar-item" onClick={() => { onClose(); onOpenReference() }}>
-                        <span className="nav-sidebar-item-icon"><BookIcon /></span>
-                        <span className="nav-sidebar-item-label">API Reference</span>
-                    </button>
                     <button className="nav-sidebar-item" onClick={() => { onClose(); onOpenPrompt() }}>
                         <span className="nav-sidebar-item-icon"><SparkleIcon /></span>
                         <span className="nav-sidebar-item-label">Prompt Guide</span>
                     </button>
-
-                    <div className="nav-sidebar-divider" style={{ margin: '0.75rem 0' }} />
-                    <p className="nav-sidebar-section-label">Preferences</p>
 
                     <button className="nav-sidebar-item theme-item" onClick={onToggleDark}>
                         <span className="nav-sidebar-item-icon">{dark ? <SunIcon /> : <MoonIcon />}</span>
@@ -238,10 +277,6 @@ export default function NavSidebar({ open, onClose, currentPath, dark, onToggleD
                         </>
                     )}
                 </nav>
-
-                <div className="nav-sidebar-footer">
-                    <span className="nav-sidebar-footer-text">MockCrud · instant mock APIs</span>
-                </div>
             </aside>
         </>
     )
