@@ -42,102 +42,11 @@ const CheckIcon = () => (
         <polyline points="20 6 9 17 4 12" />
     </svg>
 )
-const CloseIcon = () => (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-)
 const SparkleIcon = () => (
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
     </svg>
 )
-
-// ── Reference panel content data ──────────────────────────────────────────
-const DOC_ENDPOINTS = [
-    { method: 'GET', path: '/m/{slug}/{resource}', desc: 'List all records' },
-    { method: 'GET', path: '/m/{slug}/{resource}/:id', desc: 'Get record by ID' },
-    { method: 'POST', path: '/m/{slug}/{resource}', desc: 'Create a new record' },
-    { method: 'PUT', path: '/m/{slug}/{resource}/:id', desc: 'Replace a record by ID' },
-    { method: 'DELETE', path: '/m/{slug}/{resource}/:id', desc: 'Delete a record by ID' },
-]
-
-const PROMPT_TIPS = [
-    { icon: '🎯', label: 'Name it', example: '"create a product"', note: 'Fields are auto-inferred.' },
-    { icon: '📋', label: 'List fields', example: '"user with name, email, age"', note: 'Exactly those fields are used.' },
-    { icon: '🔢', label: 'Set a count', example: '"course with 5 fields"', note: 'LLM picks the best 5.' },
-    { icon: '🔗', label: 'System prompt', example: '"student management system"', note: 'Multiple linked resources with foreign keys are inferred.' },
-    { icon: '🚫', label: 'Avoid', example: '"how are you" / "president"', note: 'Off-topic or vague single words are rejected.' },
-]
-
-// ── Help sidebar (slide-in drawer) ───────────────────────────────────────
-function HelpSidebar({ open, onClose }) {
-    return (
-        <>
-            <div
-                className={`sidebar-overlay${open ? ' visible' : ''}`}
-                onClick={onClose}
-                aria-hidden="true"
-            />
-            <aside className={`help-sidebar${open ? ' open' : ''}`} aria-label="Reference">
-                <div className="sidebar-header">
-                    <span className="sidebar-header-title">📚 Reference</span>
-                    <button className="sidebar-close-btn" onClick={onClose} title="Close"><CloseIcon /></button>
-                </div>
-
-                {/* Prompt Guide */}
-                <section className="sidebar-section">
-                    <p className="sidebar-section-title">✦ Prompt Guide</p>
-                    <p className="sidebar-section-intro">Describe a data model — not a question or greeting.</p>
-                    <div className="prompt-tips-list">
-                        {PROMPT_TIPS.map((tip, i) => (
-                            <div key={i} className="prompt-tip">
-                                <span className="tip-icon">{tip.icon}</span>
-                                <div>
-                                    <span className="tip-label">{tip.label}</span>
-                                    <code className="tip-example">{tip.example}</code>
-                                    <span className="tip-note">{tip.note}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-
-                <div className="sidebar-divider" />
-
-                {/* API Reference */}
-                <section className="sidebar-section">
-                    <p className="sidebar-section-title">📖 API Reference</p>
-                    <p className="sidebar-section-intro">Every resource gets a live REST API. Your project's <strong>slug</strong> never changes.</p>
-                    <div className="sidebar-endpoint-table">
-                        {DOC_ENDPOINTS.map((ep, i) => (
-                            <div key={i} className="sidebar-ep-row">
-                                <span className={`badge badge-${ep.method} sidebar-badge`}>{ep.method}</span>
-                                <code className="mono sidebar-ep-path">{ep.path}</code>
-                                <span className="sidebar-ep-desc">{ep.desc}</span>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="sidebar-notes">
-                        <div className="sidebar-note">
-                            <span className="sidebar-note-label">ID field</span>
-                            <p>MongoDB auto-generates <code className="mono">_id</code>; the API exposes it as <code className="mono">id</code>. Use it for GET by id, PUT, and DELETE.</p>
-                        </div>
-                        <div className="sidebar-note">
-                            <span className="sidebar-note-label">Example</span>
-                            <pre className="sidebar-code">{`POST /m/abc123/customers
-{ "name": "Alice", "email": "a@b.com" }
-→ { "id": "64a...", "name": "Alice" }
-
-PUT /m/abc123/customers/64a...
-{ "name": "Alice Updated" }`}</pre>
-                        </div>
-                    </div>
-                </section>
-            </aside>
-        </>
-    )
-}
 
 // ── Method badge ───────────────────────────────────────────────────────────
 function MethodBadge({ method }) {
@@ -255,40 +164,40 @@ function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
             <div className="resource-topbar" />
 
             <div className="resource-card-inner">
-                <div className="resource-meta-row">
-                    <div className="resource-identity">
-                        <div className="resource-icon" style={{ background: `linear-gradient(135deg, ${color.from}22, ${color.to}22)`, color: color.from }}>
-                            {resourceInitial(resource.name)}
-                        </div>
-                        <div>
-                            <h3 className="resource-name">{resource.name}</h3>
-                            <div className="endpoint-chips">
-                                {endpoints.slice(0, 5).map((ep, i) => (
-                                    <span key={i} className={`chip badge-${ep.method}`}>{ep.method}</span>
-                                ))}
-                                {endpoints.length > 5 && <span className="chip-more">+{endpoints.length - 5}</span>}
-                            </div>
+                {/* Identity row: icon + name + chips */}
+                <div className="resource-identity">
+                    <div className="resource-icon" style={{ background: `linear-gradient(135deg, ${color.from}22, ${color.to}22)`, color: color.from }}>
+                        {resourceInitial(resource.name)}
+                    </div>
+                    <div className="resource-name-group">
+                        <h3 className="resource-name">{resource.name}</h3>
+                        <div className="endpoint-chips">
+                            {endpoints.slice(0, 5).map((ep, i) => (
+                                <span key={i} className={`chip badge-${ep.method}`}>{ep.method}</span>
+                            ))}
+                            {endpoints.length > 5 && <span className="chip-more">+{endpoints.length - 5}</span>}
                         </div>
                     </div>
+                </div>
 
-                    <div className="resource-actions">
-                        <button
-                            className={`auth-toggle-btn${authEnabled ? ' auth-on' : ''}`}
-                            onClick={handleToggleAuth}
-                            disabled={togglingAuth}
-                            title={authEnabled ? 'Auth enabled — click to disable' : 'Auth disabled — click to enable'}
-                        >
-                            {togglingAuth
-                                ? <span className="spinner" />
-                                : <>{authEnabled ? '🔒' : '🔓'} Auth</>}
-                        </button>
-                        <button className="icon-btn bin-btn" onClick={() => setConfirming(c => !c)} title="Delete">
-                            <TrashIcon />
-                        </button>
-                        <button className="icon-btn chevron-btn" onClick={() => setOpen(o => !o)}>
-                            <ChevronIcon open={open} />
-                        </button>
-                    </div>
+                {/* Action row — always below identity, cleaner on mobile */}
+                <div className="resource-actions">
+                    <button
+                        className={`auth-toggle-btn${authEnabled ? ' auth-on' : ''}`}
+                        onClick={handleToggleAuth}
+                        disabled={togglingAuth}
+                        title={authEnabled ? 'Auth enabled — click to disable' : 'Auth disabled — click to enable'}
+                    >
+                        {togglingAuth
+                            ? <span className="spinner" />
+                            : <>{authEnabled ? '🔒' : '🔓'} Auth</>}
+                    </button>
+                    <button className="icon-btn bin-btn" onClick={() => setConfirming(c => !c)} title="Delete">
+                        <TrashIcon />
+                    </button>
+                    <button className="icon-btn chevron-btn" onClick={() => setOpen(o => !o)}>
+                        <ChevronIcon open={open} />
+                    </button>
                 </div>
 
                 <div className="resource-url-bar">
@@ -360,13 +269,11 @@ export default function ProjectView() {
     const [prompt, setPrompt] = useState('')
     const [generating, setGenerating] = useState(false)
     const [genError, setGenError] = useState('')
-    const [sidebarOpen, setSidebarOpen] = useState(false)
 
     // prompt stores only user's suffix; the textarea displays PREFIX+prompt
     const handlePromptChange = e => {
         const val = e.target.value
         if (!val.startsWith(PREFIX)) {
-            // user deleted into prefix — restore it, keep whatever came after
             setPrompt('')
         } else {
             setPrompt(val.slice(PREFIX.length))
@@ -457,18 +364,6 @@ export default function ProjectView() {
         <>
             <Navbar />
 
-            {/* Pull-tab: always visible on right edge */}
-            <button
-                className={`sidebar-pull-tab${sidebarOpen ? ' tab-open' : ''}`}
-                onClick={() => setSidebarOpen(o => !o)}
-                aria-label="Toggle reference panel"
-            >
-                <span className="pull-tab-arrow">{sidebarOpen ? '›' : '‹'}</span>
-                <span className="pull-tab-label">Reference</span>
-            </button>
-
-            <HelpSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
             <div className="container proj-view">
                 {/* Header */}
                 <div className="proj-view-header">
@@ -483,14 +378,18 @@ export default function ProjectView() {
                 <form onSubmit={generateResource} className="gen-form card">
                     <div className="gen-form-top">
                         <p className="gen-form-label">✦ Add a resource</p>
+                        {/* "Want help prompting?" — fades when user is typing */}
                         <button
                             type="button"
                             className={`prompt-hint-btn${hintVisible ? '' : ' hidden'}`}
-                            onClick={() => setSidebarOpen(true)}
+                            onClick={() => {
+                                // Open sidebar prompt via Navbar — we dispatch a custom event
+                                window.dispatchEvent(new CustomEvent('open-prompt-dialog'))
+                            }}
                             tabIndex={hintVisible ? 0 : -1}
                             aria-hidden={!hintVisible}
                         >
-                            <SparkleIcon /> Want help prompting?
+                            <SparkleIcon /> Need help prompting?
                         </button>
                     </div>
                     <div className="prompt-input-wrap">
@@ -503,6 +402,10 @@ export default function ProjectView() {
                             rows={2}
                             spellCheck={false}
                         />
+                        {/* Helper line that fades when user types */}
+                        <p className={`prompt-helper-line${hintVisible ? '' : ' hidden'}`}>
+                            e.g. "Create a blog post with title, body, author and tags"
+                        </p>
                     </div>
                     {genError && <div className="alert alert-error">{genError}</div>}
                     <div className="gen-form-footer">

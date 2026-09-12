@@ -18,8 +18,10 @@ export default function App() {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/app" element={<Guard><Dashboard /></Guard>} />
+      <Route path="/projects" element={<Navigate to="/app" replace />} />
       <Route path="/app/:projectId" element={<Guard><ProjectView /></Guard>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
+
