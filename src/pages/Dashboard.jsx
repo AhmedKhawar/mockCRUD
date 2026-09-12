@@ -218,8 +218,6 @@ export default function Dashboard() {
                             onDelete={deleteProject} />
                     ))}
                 </div>
-
-                <DocPanel />
             </div>
         </>
     )

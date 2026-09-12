@@ -212,9 +212,9 @@ export default function NavSidebar({ open, onClose, currentPath, dark, onToggleD
                                         return (
                                             <div key={p.id} className="nav-tree-item">
                                                 <button className={`nav-tree-btn${isThisProject ? ' active' : ''}`} onClick={(e) => toggleProject(p.id, e)}>
-                                                    <span className="nav-group-chevron" style={{ transform: isOpen ? 'rotate(90deg)' : 'none' }}><ChevronRightIcon /></span>
                                                     <FolderIcon />
                                                     <span className="nav-tree-label">{p.name || 'Untitled'}</span>
+                                                    <span className="nav-group-chevron" style={{ transform: isOpen ? 'rotate(90deg)' : 'none' }}><ChevronRightIcon /></span>
                                                 </button>
                                                 {isOpen && (
                                                     <div className="nav-tree-children">
@@ -249,6 +249,11 @@ export default function NavSidebar({ open, onClose, currentPath, dark, onToggleD
                     <button className="nav-sidebar-item" onClick={() => { onClose(); onOpenPrompt() }}>
                         <span className="nav-sidebar-item-icon"><SparkleIcon /></span>
                         <span className="nav-sidebar-item-label">Prompt Guide</span>
+                    </button>
+
+                    <button className="nav-sidebar-item" onClick={() => { onClose(); onOpenReference() }}>
+                        <span className="nav-sidebar-item-icon"><BookIcon /></span>
+                        <span className="nav-sidebar-item-label">API Reference</span>
                     </button>
 
                     <button className="nav-sidebar-item theme-item" onClick={onToggleDark}>
