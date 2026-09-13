@@ -389,29 +389,30 @@
 }
 
 .auth-api-panel-header {
-    padding: 1.25rem;
+    padding: 1.1rem 1.25rem;
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0.9rem;
     border-bottom: 1px solid var(--border);
     background: linear-gradient(135deg, var(--teal-light) 0%, transparent 100%);
 }
 
 .auth-api-panel-icon {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     flex-shrink: 0;
 }
 
 .auth-api-panel-title {
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--teal);
     margin-bottom: 0.1rem;
 }
 
 .auth-api-panel-sub {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-2);
+    line-height: 1.45;
 }
 
 .auth-api-endpoints {
@@ -419,65 +420,113 @@
     flex-direction: column;
 }
 
-/* Auth URL bar — same style as resource URL bar */
-.auth-url-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: var(--bg-subtle);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 0.5rem 0.75rem;
-}
-
+/* Each endpoint row */
 .auth-api-row {
     display: flex;
     flex-direction: column;
     padding: 1rem 1.25rem;
+    gap: 0.65rem;
     border-bottom: 1px solid var(--border);
-    gap: 0.6rem;
 }
 
 .auth-api-row:last-child {
     border-bottom: none;
 }
 
-.auth-api-row-top {
+/* Badge + full description — wraps freely, no truncation */
+.auth-api-header-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.65rem;
-    flex-wrap: nowrap;
-    /* keep POST + desc on same line */
-    overflow: hidden;
-}
-
-.auth-api-path {
-    font-size: 0.8rem;
-    flex: 1;
-    color: var(--teal);
-    word-break: break-all;
-    line-height: 1.45;
+    flex-wrap: wrap;
 }
 
 .auth-api-desc {
-    font-size: 0.78rem;
-    color: var(--text-3);
-    line-height: 1.4;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 0.8rem;
+    color: var(--text-2);
+    line-height: 1.5;
+    flex: 1;
+    min-width: 0;
 }
 
-/* Datatype label inside auth required pill — matches .field-type green style */
+/* Full-width URL container */
+.auth-url-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.55rem 0.75rem;
+}
+
+.auth-api-path {
+    font-size: 0.78rem;
+    flex: 1;
+    color: var(--text);
+    word-break: break-all;
+    line-height: 1.5;
+}
+
+/* Body fields row */
+.auth-body-fields {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+}
+
+.auth-body-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.auth-field-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+/* Individual field chip: name (dark) + type badge (teal) */
+.auth-field-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    font-size: 0.74rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--bg-card);
+}
+
+.auth-field-name {
+    padding: 0.18rem 0.5rem;
+    color: var(--text);
+    font-weight: 500;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border);
+}
+
+.auth-field-type {
+    padding: 0.18rem 0.45rem;
+    color: var(--teal);
+    font-weight: 700;
+    font-size: 0.68rem;
+    background: var(--teal-light);
+    letter-spacing: 0.02em;
+}
+
+/* Keep unused .pill-type harmless */
 .pill-type {
     color: var(--teal);
     font-weight: 600;
     font-size: 0.7rem;
-    font-family: inherit;
     margin-left: 0.2rem;
 }
-
-/* No separate dark override needed — teal is already theme-aware */
 
 /* ── Section header ──────────────────────────────────────── */
 .resources-section {

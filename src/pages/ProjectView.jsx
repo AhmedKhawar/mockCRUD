@@ -70,13 +70,13 @@ function AuthAPIPanel({ slug }) {
         {
             method: 'POST',
             path: `${base}/auth/login`,
-            desc: <><span className="jwt-highlight">JWT token</span> — authenticate with email + password.</>,
+            desc: 'Returns a JWT token — authenticate with email + password.',
             reqs: ['email', 'password'],
         },
         {
             method: 'POST',
             path: `${base}/auth/logout`,
-            desc: <>Invalidate session — requires <span className="jwt-highlight bearer">Bearer token</span> header.</>,
+            desc: 'Invalidate session — requires Bearer token header.',
         },
     ]
 
@@ -98,11 +98,13 @@ function AuthAPIPanel({ slug }) {
             <div className="auth-api-endpoints">
                 {endpoints.map((ep, i) => (
                     <div key={i} className="auth-api-row">
-                        <div className="auth-api-row-top">
+                        {/* Method + description */}
+                        <div className="auth-api-header-row">
                             <MethodBadge method={ep.method} />
                             <p className="auth-api-desc">{ep.desc}</p>
                         </div>
-                        {/* URL bar styled same as resource card */}
+
+                        {/* Full-width URL container */}
                         <div className="auth-url-bar">
                             <code className="mono auth-api-path">{ep.path}</code>
                             <button
@@ -113,15 +115,19 @@ function AuthAPIPanel({ slug }) {
                                 {copied === i ? <><CheckIcon /> Copied!</> : <><CopyIcon /> Copy</>}
                             </button>
                         </div>
+
+                        {/* Body fields */}
                         {ep.reqs && (
-                            <div className="endpoint-required-list">
-                                <span className="required-label">Body:</span>
-                                {ep.reqs.map(r => (
-                                    <span key={r} className="required-pill">
-                                        {r}
-                                        <span className="pill-type">{FIELD_TYPES[r] ?? 'String'}</span>
-                                    </span>
-                                ))}
+                            <div className="auth-body-fields">
+                                <span className="auth-body-label">Body</span>
+                                <div className="auth-field-chips">
+                                    {ep.reqs.map(r => (
+                                        <span key={r} className="auth-field-chip">
+                                            <span className="auth-field-name">{r}</span>
+                                            <span className="auth-field-type">{FIELD_TYPES[r] ?? 'String'}</span>
+                                        </span>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>

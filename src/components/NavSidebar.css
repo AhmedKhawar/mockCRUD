@@ -279,7 +279,7 @@
     justify-content: center;
     width: 32px;
     height: 28px;
-    background: var(--bg-card);
+    background: transparent;
     border: 1.5px solid var(--border);
     border-radius: 6px;
     cursor: pointer;
