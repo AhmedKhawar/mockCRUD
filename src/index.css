@@ -511,10 +511,9 @@ p {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  flex: 1 1 auto;
-  /* Fill remaining height so overflow kicks in */
-  min-height: 0;
-  /* Required for overflow to work inside flex column */
+  /* Explicit max-height = panel cap minus sticky header (~58px).
+     This is the most reliable cross-browser way to force scrolling. */
+  max-height: calc(90dvh - 58px);
 }
 
 .dialog-intro {

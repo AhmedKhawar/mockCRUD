@@ -162,7 +162,6 @@ export default function NavSidebar({ open, onClose, currentPath, dark, onToggleD
                 {/* Header */}
                 <div className="nav-sidebar-header">
                     <div className="nav-sidebar-brand" onClick={() => go('/')} style={{ cursor: 'pointer' }}>
-                        <LogoIcon />
                         <span className="nav-sidebar-brand-text">Mock<span style={{ color: 'var(--text-2)', fontWeight: 500 }}>Crud</span></span>
                     </div>
                     <button className="nav-sidebar-close" onClick={onClose} title="Close menu">
