@@ -446,7 +446,9 @@
     display: flex;
     align-items: center;
     gap: 0.65rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    /* keep POST + desc on same line */
+    overflow: hidden;
 }
 
 .auth-api-path {
@@ -461,23 +463,21 @@
     font-size: 0.78rem;
     color: var(--text-3);
     line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Datatype label inside required pill */
+/* Datatype label inside auth required pill — matches .field-type green style */
 .pill-type {
-    font-size: 0.62rem;
+    color: var(--teal);
     font-weight: 600;
-    color: var(--text-3);
-    background: rgba(0, 0, 0, 0.06);
-    border-radius: 3px;
-    padding: 0 0.25rem;
-    margin-left: 0.25rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-family: inherit;
+    margin-left: 0.2rem;
 }
 
-[data-theme="dark"] .pill-type {
-    background: rgba(255, 255, 255, 0.08);
-}
+/* No separate dark override needed — teal is already theme-aware */
 
 /* ── Section header ──────────────────────────────────────── */
 .resources-section {

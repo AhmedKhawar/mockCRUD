@@ -253,13 +253,12 @@
     font-weight: 500;
 }
 
-/* ── Navbar logo + hamburger ─────────────────────────────────────────────── */
+/* ── Navbar ────────────────────────────────────────────────────────────── */
 .navbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 0 1.25rem;
-    height: 56px;
+    height: 52px;
     background: var(--bg);
     border-bottom: 1px solid var(--border);
     position: sticky;
@@ -267,18 +266,32 @@
     z-index: 100;
 }
 
-/* Logo button (opens sidebar) */
-.navbar-logo-btn {
+.navbar-brand {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    background: none;
-    border: none;
+    gap: 0.65rem;
+}
+
+/* White rectangular opener — border + lines icon */
+.navbar-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 28px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
     cursor: pointer;
-    color: var(--text);
+    color: var(--text-2);
+    flex-shrink: 0;
+    transition: border-color 0.15s, color 0.15s;
     padding: 0;
-    border-radius: 8px;
-    transition: opacity 0.15s;
+}
+
+.navbar-menu-btn:hover {
+    border-color: var(--teal);
+    color: var(--teal);
 }
 
 .navbar-wordmark {
@@ -288,56 +301,11 @@
     color: var(--text);
 }
 
-.navbar-wordmark span {
-    color: var(--teal);
-}
-
 .navbar-tagline {
-    font-size: 0.68rem;
-    color: var(--text-3);
+    font-size: 0.72rem;
+    color: var(--teal);
     font-weight: 500;
-    letter-spacing: 0.02em;
-    display: none;
-}
-
-@media (min-width: 520px) {
-    .navbar-tagline {
-        display: inline;
-    }
-}
-
-.hamburger-btn {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 4.5px;
-    width: 38px;
-    height: 38px;
-    border: 1px solid var(--border);
-    background: transparent;
-    border-radius: 9px;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    flex-shrink: 0;
-}
-
-.hamburger-btn:hover {
-    background: var(--bg-subtle);
-    border-color: var(--teal);
-}
-
-.hamburger-line {
-    display: block;
-    width: 16px;
-    height: 2px;
-    background: var(--text-2);
-    border-radius: 2px;
-    transition: background 0.15s;
-}
-
-.hamburger-btn:hover .hamburger-line {
-    background: var(--teal);
+    letter-spacing: 0.01em;
 }
 
 /* ── Projects Tree (Collapsible Hierarchy) ──────────────────────────────── */
