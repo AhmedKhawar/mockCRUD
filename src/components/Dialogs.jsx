@@ -68,8 +68,10 @@ export function ReferenceDialog({ open, onClose }) {
             <div className="dialog-endpoint-table">
                 {DOC_ENDPOINTS.map((ep, i) => (
                     <div key={i} className="dialog-ep-row">
-                        <span className={`badge badge-${ep.method} dialog-badge`}>{ep.method}</span>
-                        <code className="mono dialog-ep-path">{ep.path}</code>
+                        <div className="dialog-ep-row-top">
+                            <span className={`badge badge-${ep.method} dialog-badge`}>{ep.method}</span>
+                            <code className="mono dialog-ep-path">{ep.path}</code>
+                        </div>
                         <span className="dialog-ep-desc">{ep.desc}</span>
                     </div>
                 ))}
