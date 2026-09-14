@@ -145,17 +145,17 @@
     }
 }
 
-/* ── Dark Flow Hero ──────────────────────────────────────────────────────── */
+/* ── Flow Hero ──────────────────────────────────────────────────────── */
 .flow-hero-card {
     display: flex;
     align-items: center;
     gap: 2rem;
     margin-bottom: 4rem;
     padding: 2.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    background: linear-gradient(145deg, #181a20 0%, #111216 100%);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    background: var(--bg-card);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     position: relative;
     max-width: 900px;
@@ -168,7 +168,7 @@
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #8892b0;
+    color: var(--text-3);
     margin-bottom: 1.25rem;
 }
 
@@ -184,10 +184,10 @@
 .flow-hero-prompt-wrap {
     position: relative;
     padding: 1.5rem;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-    box-shadow: 0 0 40px rgba(45, 212, 191, 0.08);
+    box-shadow: 0 0 30px var(--teal-light);
 }
 
 /* AI glowing border effect */
@@ -222,8 +222,7 @@
 }
 
 .flow-hero-create {
-    color: #64ffda;
-    /* Teal code highlight */
+    color: var(--teal);
     font-family: 'JetBrains Mono', monospace;
     font-weight: 600;
     font-size: 0.85rem;
@@ -231,17 +230,17 @@
 
 .flow-hero-prompt-text,
 .flow-hero-prompt-hint {
-    color: #e2e8f0;
+    color: var(--text);
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
     line-height: 1.5;
 }
 
 .flow-hero-prompt-hint {
-    color: #94a3b8;
+    color: var(--text-2);
     margin-top: 0.75rem;
     padding-left: 0.6rem;
-    border-left: 2px solid rgba(255, 255, 255, 0.1);
+    border-left: 2px solid var(--border);
 }
 
 .flow-hero-ai-badge {
@@ -249,15 +248,15 @@
     bottom: -12px;
     left: 50%;
     transform: translateX(-50%);
-    background: #111;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--bg-card);
+    border: 1px solid var(--teal-light);
     padding: 0.2rem 0.85rem;
     border-radius: 20px;
     font-size: 0.65rem;
     font-weight: 800;
     letter-spacing: 0.05em;
     color: var(--teal);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 2;
 }
 
@@ -268,7 +267,7 @@
     transform: translateY(-50%);
     display: flex;
     font-size: 1.5rem;
-    color: rgba(255, 255, 255, 0.15);
+    color: var(--border);
     letter-spacing: -0.2em;
 }
 
@@ -276,7 +275,7 @@
 .flow-hero-divider {
     width: 1px;
     align-self: stretch;
-    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.1) 20%, rgba(255, 255, 255, 0.1) 80%, transparent);
+    background: linear-gradient(to bottom, transparent, var(--border) 20%, var(--border) 80%, transparent);
     margin: 0 1.5rem;
 }
 
@@ -300,14 +299,14 @@
     gap: 0.8rem;
     padding: 0.65rem 0.85rem;
     border-radius: var(--radius);
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
     transition: transform 0.2s, background 0.2s, border-color 0.2s;
 }
 
 .flow-hero-ep-row:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.12);
+    background: var(--bg);
+    border-color: var(--teal);
     transform: translateX(4px);
 }
 
@@ -332,13 +331,13 @@
 .flow-hero-ep-label {
     font-size: 0.82rem;
     font-weight: 600;
-    color: #f8fafc;
+    color: var(--text);
 }
 
 .flow-hero-ep-path {
     font-size: 0.72rem;
     font-family: 'JetBrains Mono', monospace;
-    color: #64748b;
+    color: var(--text-2);
 }
 
 @media (max-width: 768px) {
