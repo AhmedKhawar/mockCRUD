@@ -557,6 +557,12 @@ p {
   gap: 0.35rem;
   padding: 0.7rem 0.9rem;
   border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.dialog-ep-row:hover {
+  background: var(--bg-subtle);
 }
 
 .dialog-ep-row:last-child {
@@ -588,6 +594,48 @@ p {
 .dialog-ep-desc {
   font-size: 0.7rem;
   color: var(--text-3);
+}
+
+/* ── Expandable Sample Response ── */
+.dialog-ep-sample-container {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-top 0.3s ease;
+}
+
+.dialog-ep-row.is-open .dialog-ep-sample-container {
+  max-height: 300px;
+  opacity: 1;
+  margin-top: 0.5rem;
+}
+
+.dialog-ep-sample-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.sample-header {
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border);
+  padding: 0.35rem 0.7rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sample-code {
+  margin: 0;
+  padding: 0.75rem;
+  font-size: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  white-space: pre-wrap;
+  background: var(--bg);
 }
 
 /* Notes */

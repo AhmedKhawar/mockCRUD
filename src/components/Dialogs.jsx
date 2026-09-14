@@ -1,12 +1,27 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 // ── Shared dialog data ───────────────────────────────────────────────────────
 export const DOC_ENDPOINTS = [
-    { method: 'GET', path: '/m/{slug}/{resource}', desc: 'List all records' },
-    { method: 'GET', path: '/m/{slug}/{resource}/:id', desc: 'Get record by ID' },
-    { method: 'POST', path: '/m/{slug}/{resource}', desc: 'Create a new record' },
-    { method: 'PUT', path: '/m/{slug}/{resource}/:id', desc: 'Replace a record by ID' },
-    { method: 'DELETE', path: '/m/{slug}/{resource}/:id', desc: 'Delete a record by ID' },
+    {
+        method: 'GET', path: '/m/{slug}/{resource}', desc: 'List all records',
+        sample: '[\n    {\n        "id": "6aa7e6aa...",\n        "name": "Alex",\n        "email": "alex@gmail.com",\n        "role": "engineer",\n        "createdAt": "today"\n    }\n]'
+    },
+    {
+        method: 'GET', path: '/m/{slug}/{resource}/:id', desc: 'Get record by ID',
+        sample: '{\n    "id": "6aa7e6aa...",\n    "name": "Alex",\n    "email": "alex@gmail.com",\n    "role": "engineer",\n    "createdAt": "today"\n}'
+    },
+    {
+        method: 'POST', path: '/m/{slug}/{resource}', desc: 'Create a new record',
+        sample: '{\n    "id": "6aa7e6aa...",\n    "name": "Alex",\n    "email": "alex@gmail.com",\n    "role": "engineer",\n    "createdAt": "today"\n}'
+    },
+    {
+        method: 'PUT', path: '/m/{slug}/{resource}/:id', desc: 'Replace a record by ID',
+        sample: '{\n    "id": "6aa7e6aa...",\n    "name": "Alex",\n    "email": "alex@gmail.com",\n    "role": "engineer",\n    "createdAt": "YESTERDAY"\n}'
+    },
+    {
+        method: 'DELETE', path: '/m/{slug}/{resource}/:id', desc: 'Delete a record by ID',
+        sample: '{\n    "message": "Record deleted successfully",\n    "id": "6aa7e6aa..."\n}'
+    },
 ]
 
 export const PROMPT_TIPS = [
@@ -59,6 +74,8 @@ function Dialog({ open, onClose, title, children }) {
 
 // ── API Reference Dialog ──────────────────────────────────────────────────────
 export function ReferenceDialog({ open, onClose }) {
+    const [openEp, setOpenEp] = useState(null)
+
     return (
         <Dialog open={open} onClose={onClose} title="📖 API Reference">
             <p className="dialog-intro">
@@ -66,15 +83,31 @@ export function ReferenceDialog({ open, onClose }) {
             </p>
 
             <div className="dialog-endpoint-table">
-                {DOC_ENDPOINTS.map((ep, i) => (
-                    <div key={i} className="dialog-ep-row">
-                        <div className="dialog-ep-row-top">
-                            <span className={`badge badge-${ep.method} dialog-badge`}>{ep.method}</span>
-                            <code className="mono dialog-ep-path">{ep.path}</code>
+                {DOC_ENDPOINTS.map((ep, i) => {
+                    const isOpen = openEp === i;
+                    return (
+                        <div
+                            key={i}
+                            className={`dialog-ep-row ${isOpen ? 'is-open' : ''}`}
+                            onMouseEnter={() => setOpenEp(i)}
+                            onMouseLeave={() => setOpenEp(null)}
+                            onClick={() => setOpenEp(isOpen ? null : i)}
+                        >
+                            <div className="dialog-ep-row-top">
+                                <span className={`badge badge-${ep.method} dialog-badge`}>{ep.method}</span>
+                                <code className="mono dialog-ep-path">{ep.path}</code>
+                            </div>
+                            <span className="dialog-ep-desc">{ep.desc}</span>
+
+                            <div className="dialog-ep-sample-container">
+                                <div className="dialog-ep-sample-box">
+                                    <div className="sample-header">Example Response ({ep.method})</div>
+                                    <pre className="sample-code">{ep.sample}</pre>
+                                </div>
+                            </div>
                         </div>
-                        <span className="dialog-ep-desc">{ep.desc}</span>
-                    </div>
-                ))}
+                    )
+                })}
             </div>
 
             <div className="dialog-notes">

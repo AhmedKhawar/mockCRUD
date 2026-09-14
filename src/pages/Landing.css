@@ -200,6 +200,7 @@
     background: linear-gradient(135deg, rgba(45, 212, 191, 0.5), transparent 40%, transparent 60%, rgba(206, 147, 216, 0.2));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
     pointer-events: none;
 }
