@@ -3,6 +3,14 @@ import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import './Landing.css'
 
+const FLOW_ENDPOINTS = [
+    { method: 'GET', label: 'List all records', path: '/m/{slug}/users', color: '#4ade80', bg: 'rgba(74,222,128,0.12)' },
+    { method: 'GET', label: 'Get record by ID', path: '/m/{slug}/users/:id', color: '#4ade80', bg: 'rgba(74,222,128,0.12)' },
+    { method: 'POST', label: 'Create a new record', path: '/m/{slug}/users', color: '#93c5fd', bg: 'rgba(147,197,253,0.12)' },
+    { method: 'PUT', label: 'Update record by ID', path: '/m/{slug}/users/:id', color: '#fde68a', bg: 'rgba(253,230,138,0.12)' },
+    { method: 'DELETE', label: 'Delete record by ID', path: '/m/{slug}/users/:id', color: '#fb7185', bg: 'rgba(251,113,133,0.12)' },
+]
+
 export default function Landing() {
     const { token } = useAuth()
 
@@ -29,6 +37,55 @@ export default function Landing() {
                                     <Link to="/signin" className="btn btn-outline">Sign in</Link>
                                 </>
                             )}
+                        </div>
+                    </div>
+
+                    {/* ── Dark Flow Hero ── */}
+                    <div className="flow-hero-card">
+                        {/* Left: Prompt */}
+                        <div className="flow-hero-left">
+                            <p className="flow-hero-section-label">PROMPT &amp; ENDPOINTS</p>
+
+                            <div className="flow-hero-prompt-wrap">
+                                <div className="flow-hero-prompt-inner">
+                                    <div className="flow-hero-prompt-line">
+                                        <span className="flow-hero-prompt-cursor">▌</span>
+                                        <span className="flow-hero-create">Create&nbsp;</span>
+                                        <span className="flow-hero-prompt-text">a user management system</span>
+                                    </div>
+                                    <div className="flow-hero-prompt-hint">with name, email, role, and createdAt</div>
+                                </div>
+                                <div className="flow-hero-ai-badge">⚡ AI</div>
+                            </div>
+
+                            <div className="flow-hero-arrows">
+                                <span className="flow-hero-arrow-char">›</span>
+                                <span className="flow-hero-arrow-char">›</span>
+                                <span className="flow-hero-arrow-char">›</span>
+                            </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="flow-hero-divider" />
+
+                        {/* Right: Endpoints */}
+                        <div className="flow-hero-right">
+                            <p className="flow-hero-section-label">5 LIVE ENDPOINTS</p>
+                            <div className="flow-hero-ep-list">
+                                {FLOW_ENDPOINTS.map((ep, i) => (
+                                    <div
+                                        key={i}
+                                        className="flow-hero-ep-row"
+                                        style={{ '--ep-color': ep.color, '--ep-bg': ep.bg }}
+                                    >
+                                        <span className="flow-hero-ep-badge">{ep.method}</span>
+                                        <div className="flow-hero-ep-info">
+                                            <span className="flow-hero-ep-label">{ep.label}</span>
+                                            <code className="flow-hero-ep-path">{ep.path}</code>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
 

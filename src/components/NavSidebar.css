@@ -272,26 +272,73 @@
     gap: 0.65rem;
 }
 
-/* White rectangular opener — border + lines icon */
+/* Hamburger menu opener with pulsing green glow ring */
 .navbar-menu-btn {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
     background: transparent;
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
+    border: none;
+    border-radius: 10px;
     cursor: pointer;
     color: var(--text-2);
     flex-shrink: 0;
-    transition: border-color 0.15s, color 0.15s;
+    transition: background 0.18s, color 0.18s;
     padding: 0;
+    z-index: 0;
 }
 
 .navbar-menu-btn:hover {
-    border-color: var(--teal);
+    background: var(--bg-subtle);
     color: var(--teal);
+}
+
+/* Pulsing green highlight ring */
+.menu-btn-pulse {
+    position: absolute;
+    inset: -3px;
+    border-radius: 12px;
+    border: 1.5px solid var(--teal);
+    opacity: 0;
+    animation: menuPulse 2.8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes menuPulse {
+    0% {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+
+    30% {
+        opacity: 0.75;
+        transform: scale(1);
+    }
+
+    60% {
+        opacity: 0.2;
+        transform: scale(1.06);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+}
+
+/* Wordmark button — transparent, no border */
+.navbar-wordmark-btn {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
 }
 
 .navbar-wordmark {
@@ -299,6 +346,11 @@
     font-weight: 800;
     letter-spacing: -0.02em;
     color: var(--text);
+    transition: color 0.15s;
+}
+
+.navbar-wordmark-btn:hover .navbar-wordmark {
+    color: var(--teal);
 }
 
 .navbar-tagline {
