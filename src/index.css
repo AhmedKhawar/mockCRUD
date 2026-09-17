@@ -583,12 +583,41 @@ p {
 
 .dialog-ep-path {
   font-size: 0.75rem;
-  color: var(--text);
+  color: var(--text-muted);
   word-break: break-all;
-  line-height: 1.5;
+  line-height: normal;
+  /* remove extra space so it aligns with badge and btn */
+  align-self: center;
   font-family: 'JetBrains Mono', monospace;
   overflow-wrap: break-word;
   min-width: 0;
+}
+
+.dialog-ep-dropdown-btn {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.dialog-ep-dropdown-btn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text);
+}
+
+.dialog-ep-dropdown-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
 }
 
 .dialog-ep-desc {
@@ -605,7 +634,7 @@ p {
 }
 
 .dialog-ep-row.is-open .dialog-ep-sample-container {
-  max-height: 300px;
+  max-height: 800px;
   opacity: 1;
   margin-top: 0.5rem;
 }

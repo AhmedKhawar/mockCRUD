@@ -4,23 +4,23 @@ import { useEffect, useState } from 'react'
 export const DOC_ENDPOINTS = [
     {
         method: 'GET', path: '/m/{slug}/{resource}', desc: 'List all records',
-        sample: '[\n    {\n        "id": "6aa7e6aa...",\n        "name": "Alex",\n        "email": "alex@gmail.com",\n        "role": "engineer",\n        "createdAt": "today"\n    }\n]'
+        sample: '{\n    "records": [\n        {\n            "id": "6aabd867c0c98f87d7df5057",\n            "name": "Alex Jones",\n            "age": 28,\n            "active": false\n        }\n    ],\n    "count": 1\n}'
     },
     {
         method: 'GET', path: '/m/{slug}/{resource}/:id', desc: 'Get record by ID',
-        sample: '{\n    "id": "6aa7e6aa...",\n    "name": "Alex",\n    "email": "alex@gmail.com",\n    "role": "engineer",\n    "createdAt": "today"\n}'
+        sample: '{\n    "id": "6aabd867c0c98f87d7df5057",\n    "name": "Alex Jones",\n    "age": 28,\n    "active": false\n}'
     },
     {
         method: 'POST', path: '/m/{slug}/{resource}', desc: 'Create a new record',
-        sample: '{\n    "id": "6aa7e6aa...",\n    "name": "Alex",\n    "email": "alex@gmail.com",\n    "role": "engineer",\n    "createdAt": "today"\n}'
+        sample: '{\n    "message": "Record added successfully",\n    "id": "6aabd867c0c98f87d7df5057",\n    "name": "Alex Jones",\n    "age": 28,\n    "active": false\n}'
     },
     {
         method: 'PUT', path: '/m/{slug}/{resource}/:id', desc: 'Replace a record by ID',
-        sample: '{\n    "id": "6aa7e6aa...",\n    "name": "Alex",\n    "email": "alex@gmail.com",\n    "role": "engineer",\n    "createdAt": "YESTERDAY"\n}'
+        sample: '{\n    "message": "Record updated successfully",\n    "id": "6aabd867c0c98f87d7df5057",\n    "name": "Alex Jones",\n    "age": 28,\n    "active": true\n}'
     },
     {
         method: 'DELETE', path: '/m/{slug}/{resource}/:id', desc: 'Delete a record by ID',
-        sample: '{\n    "message": "Record deleted successfully",\n    "id": "6aa7e6aa..."\n}'
+        sample: '{\n    "message": "Record deleted successfully",\n    "id": "6aabd867c0c98f87d7df5057"\n}'
     },
 ]
 
@@ -89,13 +89,27 @@ export function ReferenceDialog({ open, onClose }) {
                         <div
                             key={i}
                             className={`dialog-ep-row ${isOpen ? 'is-open' : ''}`}
-                            onMouseEnter={() => setOpenEp(i)}
-                            onMouseLeave={() => setOpenEp(null)}
-                            onClick={() => setOpenEp(isOpen ? null : i)}
                         >
                             <div className="dialog-ep-row-top">
                                 <span className={`badge badge-${ep.method} dialog-badge`}>{ep.method}</span>
                                 <code className="mono dialog-ep-path">{ep.path}</code>
+                                <button
+                                    className="dialog-ep-dropdown-btn"
+                                    onClick={(e) => {
+                                        const isNowOpen = !isOpen;
+                                        setOpenEp(isNowOpen ? i : null);
+                                        if (isNowOpen) {
+                                            const row = e.currentTarget.closest('.dialog-ep-row');
+                                            setTimeout(() => {
+                                                if (row) row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                            }, 250);
+                                        }
+                                    }}
+                                >
+                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className={isOpen ? 'rotate-180' : ''}>
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
                             </div>
                             <span className="dialog-ep-desc">{ep.desc}</span>
 
