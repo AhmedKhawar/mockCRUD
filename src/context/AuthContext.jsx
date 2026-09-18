@@ -15,6 +15,22 @@ export function AuthProvider({ children }) {
         setUser(userData)
     }
 
+    const loginWithGoogle = async (credential) => {
+        const url = window.location.hostname === "localhost"
+            ? "http://localhost:8000/api/auth/google"
+            : "https://mock-crud-backend.vercel.app/api/auth/google";
+
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ credential }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Google Login failed');
+        login(data.token, data.token_data);
+    }
+
+
     const logout = async () => {
         try {
             await fetch('https://mock-crud-backend.vercel.app/api/logout', {
@@ -29,7 +45,7 @@ export function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={{ token, user, login, logout }}>
+        <AuthContext.Provider value={{ token, user, login, logout, loginWithGoogle }}>
             {children}
         </AuthContext.Provider>
     )

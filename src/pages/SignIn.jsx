@@ -5,15 +5,30 @@ import { useToast } from '../context/ToastContext'
 import Navbar from '../components/Navbar'
 import './AuthForm.css'
 
+import { GoogleLogin } from '@react-oauth/google'
+
 const API = 'https://mock-crud-backend.vercel.app'
 
 export default function SignIn() {
     const navigate = useNavigate()
-    const { login } = useAuth()
+    const { login, loginWithGoogle } = useAuth()
     const { show } = useToast()
     const [form, setForm] = useState({ email: '', password: '' })
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            setLoading(true)
+            await loginWithGoogle(credentialResponse.credential)
+            show('Signed in with Google successfully!', 'success')
+            navigate('/app')
+        } catch (err) {
+            setError(err.message)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const change = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
@@ -43,6 +58,20 @@ export default function SignIn() {
                 <div className="auth-box">
                     <h1>Sign in</h1>
                     <p className="auth-sub">Welcome back to MockCRUD</p>
+
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', width: '100%' }}>
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={() => setError('Google sign in failed')}
+                            theme="filled_black"
+                            shape="pill"
+                        />
+                    </div>
+
+                    <div className="auth-divider">
+                        <span>or continue with email</span>
+                    </div>
+
                     <form onSubmit={submit} className="auth-form">
                         <div className="form-group">
                             <label className="form-label">Email</label>

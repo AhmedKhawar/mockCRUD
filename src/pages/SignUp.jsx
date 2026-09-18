@@ -1,17 +1,33 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import Navbar from '../components/Navbar'
 import './AuthForm.css'
+import { GoogleLogin } from '@react-oauth/google'
 
 const API = 'https://mock-crud-backend.vercel.app'
 
 export default function SignUp() {
     const navigate = useNavigate()
+    const { loginWithGoogle } = useAuth()
     const { show } = useToast()
     const [form, setForm] = useState({ email: '', password: '' })
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            setLoading(true)
+            await loginWithGoogle(credentialResponse.credential)
+            show('Successfully signed up and logged in with Google!', 'success')
+            navigate('/app')
+        } catch (err) {
+            setError(err.message)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const change = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
@@ -38,6 +54,21 @@ export default function SignUp() {
                 <div className="auth-box">
                     <h1>Create account</h1>
                     <p className="auth-sub">Get started with MockCRUD for free</p>
+
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', width: '100%' }}>
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={() => setError('Google sign up failed')}
+                            theme="filled_black"
+                            shape="pill"
+                            text="signup_with"
+                        />
+                    </div>
+
+                    <div className="auth-divider">
+                        <span>or continue with email</span>
+                    </div>
+
                     <form onSubmit={submit} className="auth-form">
                         <div className="form-group">
                             <label className="form-label">Email</label>
