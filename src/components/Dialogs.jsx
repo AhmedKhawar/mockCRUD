@@ -95,7 +95,9 @@ export function ReferenceDialog({ open, onClose }) {
                                 <code className="mono dialog-ep-path">{ep.path}</code>
                                 <button
                                     className="dialog-ep-dropdown-btn"
+                                    title="View sample response"
                                     onClick={(e) => {
+                                        e.stopPropagation();
                                         const isNowOpen = !isOpen;
                                         setOpenEp(isNowOpen ? i : null);
                                         if (isNowOpen) {
@@ -106,7 +108,8 @@ export function ReferenceDialog({ open, onClose }) {
                                         }
                                     }}
                                 >
-                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className={isOpen ? 'rotate-180' : ''}>
+                                    {isOpen ? 'Hide response' : 'View response'}
+                                    <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" className={isOpen ? 'rotate-180' : ''}>
                                         <polyline points="6 9 12 15 18 9"></polyline>
                                     </svg>
                                 </button>
