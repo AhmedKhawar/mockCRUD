@@ -1,10 +1,13 @@
+/* ────────────────────────────────────────────────────────────────────────
+   CreationMode.css — uses only tokens defined in index.css
+   ──────────────────────────────────────────────────────────────────────── */
+
 /* ── Root ───────────────────────────────────────────────────────────────── */
 .cm-root {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 0;
-    background: var(--card);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -14,84 +17,85 @@
 .cm-tabs {
     display: flex;
     border-bottom: 1px solid var(--border);
+    background: var(--bg-subtle);
 }
 
 .cm-tab {
     flex: 1;
-    padding: 0.85rem 1rem;
+    padding: 0.8rem 1rem;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
-    color: var(--text-muted);
-    font-family: var(--font-sans);
-    font-size: 0.8rem;
+    color: var(--text-3);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
     font-weight: 600;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
     cursor: pointer;
-    transition: color 0.18s, border-color 0.18s, background 0.18s;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 
 .cm-tab:hover:not(:disabled) {
     color: var(--text);
-    background: var(--bg);
+    background: var(--bg-card);
 }
 
 .cm-tab-active {
     color: var(--teal) !important;
     border-bottom-color: var(--teal) !important;
-    background: var(--bg) !important;
+    background: var(--bg-card) !important;
 }
 
 .cm-tab:disabled {
-    opacity: 0.5;
+    opacity: 0.45;
     cursor: not-allowed;
 }
 
 /* ── Body ───────────────────────────────────────────────────────────────── */
 .cm-body {
-    padding: 1.25rem;
+    padding: 1.1rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.85rem;
 }
 
 /* ── Resource Card ──────────────────────────────────────────────────────── */
 .cm-resource-card {
     background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    overflow: hidden;
+    border-radius: var(--radius);
 }
 
 .cm-resource-header {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.7rem 0.9rem;
+    padding: 0.65rem 0.85rem;
     border-bottom: 1px solid var(--border);
+    background: var(--bg-subtle);
     flex-wrap: wrap;
-    background: var(--card);
+    border-radius: var(--radius) var(--radius) 0 0;
 }
 
-.cm-resource-label {
+.cm-resource-num {
     font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-weight: 800;
+    letter-spacing: 0.07em;
     color: var(--teal);
-    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .cm-resource-name-input {
     flex: 1;
-    min-width: 100px;
-    background: var(--bg);
+    min-width: 90px;
+    background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.3rem 0.55rem;
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
+    border-radius: 6px;
+    padding: 0.28rem 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
     color: var(--text);
-    transition: border-color 0.18s;
+    transition: border-color 0.15s;
 }
 
 .cm-resource-name-input:focus {
@@ -100,99 +104,99 @@
 }
 
 .cm-resource-name-input::placeholder {
-    color: var(--text-muted);
+    color: var(--text-3);
+}
+
+.cm-auth-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: auto;
+}
+
+.cm-auth-label {
+    font-size: 0.7rem;
+    color: var(--text-2);
+    white-space: nowrap;
 }
 
 .cm-resource-del {
     background: transparent;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    padding: 0.3rem 0.4rem;
-    color: var(--text-muted);
+    border: none;
+    color: var(--text-3);
     cursor: pointer;
     display: flex;
     align-items: center;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
-    margin-left: auto;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: color 0.15s;
+    flex-shrink: 0;
 }
 
 .cm-resource-del:hover {
     color: #fb7185;
-    border-color: #fb718540;
-    background: #fb718510;
 }
 
-/* ── Infer label (checkbox + text) ────────────────────────────────────── */
-.cm-infer-label {
-    display: flex;
+/* ── Custom checkbox ────────────────────────────────────────────────────── */
+.cm-checkbox-label {
+    display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
     cursor: pointer;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    white-space: nowrap;
+    user-select: none;
 }
 
-/* Hide the native checkbox */
-.cm-infer-label input[type="checkbox"] {
+.cm-checkbox-native {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
+    pointer-events: none;
 }
 
-/* Custom checkbox box */
-.cm-infer-check {
-    width: 15px;
-    height: 15px;
+.cm-checkbox-box {
+    width: 16px;
+    height: 16px;
     flex-shrink: 0;
     border: 1.5px solid var(--border);
-    border-radius: 3px;
-    background: var(--bg);
+    border-radius: 4px;
+    background: var(--bg-card);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     transition: background 0.15s, border-color 0.15s;
 }
 
-.cm-infer-label input[type="checkbox"]:checked~.cm-infer-check {
+.cm-checkbox-label:has(.cm-checkbox-native:checked) .cm-checkbox-box {
     background: var(--teal);
     border-color: var(--teal);
 }
 
-.cm-infer-check::after {
-    content: '';
-    display: none;
-    width: 4px;
-    height: 8px;
-    border: 2px solid #fff;
-    border-top: none;
-    border-left: none;
-    transform: rotate(45deg) translate(-1px, -1px);
-}
-
-.cm-infer-label input[type="checkbox"]:checked~.cm-infer-check::after {
-    display: block;
+.cm-checkbox-text {
+    font-size: 0.72rem;
+    color: var(--text-2);
+    white-space: nowrap;
 }
 
 /* ── Count input ────────────────────────────────────────────────────────── */
 .cm-count-label {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 0.72rem;
-    color: var(--text-muted);
+    font-size: 0.7rem;
+    color: var(--text-2);
     white-space: nowrap;
 }
 
 .cm-count-input {
-    width: 50px;
-    background: var(--bg);
+    width: 48px;
+    background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.25rem 0.4rem;
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
+    border-radius: 5px;
+    padding: 0.22rem 0.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
     color: var(--text);
     text-align: center;
 }
@@ -202,18 +206,12 @@
     border-color: var(--teal);
 }
 
-/* ── Auth toggle ────────────────────────────────────────────────────────── */
-.cm-auth-label {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-}
-
-/* Toggle switch */
+/* ── Toggle switch ──────────────────────────────────────────────────────── */
 .cm-toggle {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     cursor: pointer;
+    position: relative;
 }
 
 .cm-toggle input[type="checkbox"] {
@@ -225,11 +223,11 @@
 
 .cm-toggle-track {
     position: relative;
-    display: inline-block;
-    width: 34px;
-    height: 18px;
-    background: var(--border);
+    display: block;
+    width: 32px;
+    height: 17px;
     border-radius: 999px;
+    background: var(--border);
     transition: background 0.2s;
     flex-shrink: 0;
 }
@@ -242,84 +240,77 @@
     position: absolute;
     top: 2px;
     left: 2px;
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
     border-radius: 50%;
     background: #fff;
     transition: transform 0.2s;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
 .cm-toggle input[type="checkbox"]:checked+.cm-toggle-track .cm-toggle-thumb {
-    transform: translateX(16px);
+    transform: translateX(15px);
 }
 
 /* ── Infer banner ───────────────────────────────────────────────────────── */
 .cm-infer-banner {
     display: flex;
     align-items: flex-start;
-    gap: 0.65rem;
-    padding: 0.75rem 0.9rem;
-    background: color-mix(in srgb, var(--teal) 8%, transparent);
-    border-top: 1px solid color-mix(in srgb, var(--teal) 20%, transparent);
-    color: var(--teal);
+    gap: 0.55rem;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.75rem;
+    color: var(--text-2);
+    line-height: 1.55;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
 }
 
 .cm-infer-banner svg {
-    margin-top: 2px;
+    color: var(--teal);
     flex-shrink: 0;
+    margin-top: 1px;
 }
 
-.cm-infer-banner-title {
-    display: block;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    margin-bottom: 0.2rem;
-}
-
-.cm-infer-banner-desc {
-    display: block;
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    line-height: 1.5;
+.cm-infer-banner strong {
+    color: var(--teal);
 }
 
 /* ── Fields section ─────────────────────────────────────────────────────── */
 .cm-fields-section {
-    padding: 0.75rem 0.9rem;
+    padding: 0.75rem 0.85rem;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.35rem;
 }
 
 .cm-field-header-row {
     display: grid;
-    grid-template-columns: 1fr 110px 62px 30px;
-    gap: 0.5rem;
-    padding: 0 0.2rem 0.3rem;
+    grid-template-columns: 1fr 100px 42px 28px;
+    gap: 0.4rem;
+    padding: 0 0 0.25rem;
     font-size: 0.6rem;
     font-weight: 700;
-    letter-spacing: 0.07em;
-    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    color: var(--text-3);
+    text-transform: uppercase;
     border-bottom: 1px solid var(--border);
 }
 
 .cm-field-row {
     display: grid;
-    grid-template-columns: 1fr 110px 62px 30px;
-    gap: 0.5rem;
+    grid-template-columns: 1fr 100px 42px 28px;
+    gap: 0.4rem;
     align-items: center;
 }
 
 .cm-field-input {
     width: 100%;
-    background: var(--bg);
+    background: var(--bg-subtle);
     border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.3rem 0.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
+    border-radius: 5px;
+    padding: 0.26rem 0.45rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
     color: var(--text);
     transition: border-color 0.15s;
 }
@@ -330,22 +321,18 @@
 }
 
 .cm-field-input::placeholder {
-    color: var(--text-muted);
-}
-
-.cm-select-wrap {
-    position: relative;
+    color: var(--text-3);
 }
 
 .cm-field-select {
     width: 100%;
     appearance: none;
-    background: var(--bg);
+    background: var(--bg-subtle);
     border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.3rem 0.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
+    border-radius: 5px;
+    padding: 0.26rem 0.45rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
     color: var(--text);
     cursor: pointer;
     transition: border-color 0.15s;
@@ -356,64 +343,22 @@
     border-color: var(--teal);
 }
 
-/* ── Required checkbox ──────────────────────────────────────────────────── */
-.cm-field-required {
+.cm-field-req-cell {
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-}
-
-.cm-field-required input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.cm-req-box {
-    width: 16px;
-    height: 16px;
-    border: 1.5px solid var(--border);
-    border-radius: 3px;
-    background: var(--bg);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s, border-color 0.15s;
-    flex-shrink: 0;
-}
-
-.cm-field-required input[type="checkbox"]:checked+.cm-req-box {
-    background: var(--teal);
-    border-color: var(--teal);
-}
-
-.cm-req-box::after {
-    content: '';
-    display: none;
-    width: 4px;
-    height: 8px;
-    border: 2px solid #fff;
-    border-top: none;
-    border-left: none;
-    transform: rotate(45deg) translate(-1px, -1px);
-}
-
-.cm-field-required input[type="checkbox"]:checked+.cm-req-box::after {
-    display: block;
 }
 
 .cm-field-del {
     background: transparent;
     border: none;
-    color: var(--text-muted);
+    color: var(--text-3);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0.2rem;
-    border-radius: var(--radius-sm);
+    border-radius: 4px;
     transition: color 0.15s;
 }
 
@@ -422,16 +367,16 @@
 }
 
 .cm-add-field-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    margin-top: 0.25rem;
+    gap: 0.3rem;
+    margin-top: 0.15rem;
     background: transparent;
     border: 1px dashed var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.35rem 0.65rem;
-    font-size: 0.72rem;
-    color: var(--text-muted);
+    border-radius: 5px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+    color: var(--text-3);
     cursor: pointer;
     transition: color 0.15s, border-color 0.15s;
     align-self: flex-start;
@@ -442,17 +387,17 @@
     border-color: var(--teal);
 }
 
-/* ── Add resource button ────────────────────────────────────────────────── */
+/* ── Add resource ───────────────────────────────────────────────────────── */
 .cm-add-resource-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.4rem;
     background: transparent;
     border: 1px dashed var(--border);
-    border-radius: var(--radius-md);
-    padding: 0.6rem 1rem;
-    font-size: 0.78rem;
-    color: var(--text-muted);
+    border-radius: var(--radius);
+    padding: 0.55rem 0.9rem;
+    font-size: 0.76rem;
+    color: var(--text-3);
     cursor: pointer;
     transition: color 0.15s, border-color 0.15s;
     align-self: flex-start;
@@ -473,27 +418,22 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 0.25rem;
+    padding-top: 0.5rem;
     border-top: 1px solid var(--border);
-    margin-top: 0.25rem;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.65rem;
 }
 
 .cm-footer-stats {
-    font-size: 0.72rem;
-    color: var(--text-muted);
+    font-size: 0.7rem;
+    color: var(--text-3);
 }
 
 .cm-submit-btn {
-    min-width: 180px;
+    min-width: 170px;
 }
 
-/* ── Infer tab (system prompt) ─────────────────────────────────────────── */
-.cm-infer-body {
-    gap: 1rem;
-}
-
+/* ── Infer system tab ───────────────────────────────────────────────────── */
 .cm-infer-section {
     display: flex;
     flex-direction: column;
@@ -501,21 +441,37 @@
 }
 
 .cm-infer-section-label {
-    font-size: 0.7rem;
+    font-size: 0.67rem;
     font-weight: 700;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-3);
 }
 
 .cm-system-input {
-    font-family: var(--font-sans);
-    font-size: 0.9rem;
-    padding: 0.65rem 0.85rem;
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.6rem 0.85rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--text);
+    transition: border-color 0.15s;
+}
+
+.cm-system-input:focus {
+    outline: none;
+    border-color: var(--teal);
+}
+
+.cm-system-input::placeholder {
+    color: var(--text-3);
 }
 
 .cm-infer-hint {
     font-size: 0.72rem;
-    color: var(--text-muted);
+    color: var(--text-3);
     line-height: 1.55;
 }
 
@@ -523,8 +479,8 @@
 .cm-loading-overlay {
     position: absolute;
     inset: 0;
-    background: color-mix(in srgb, var(--bg) 85%, transparent);
-    backdrop-filter: blur(3px);
+    background: color-mix(in srgb, var(--bg-card) 80%, transparent);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -536,28 +492,28 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.7rem;
 }
 
 .cm-loading-dots {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.45rem;
 }
 
 .cm-loading-dots span {
-    width: 10px;
-    height: 10px;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
     background: var(--teal);
-    animation: cm-bounce 1.1s ease-in-out infinite;
+    animation: cm-bounce 1s ease-in-out infinite;
 }
 
 .cm-loading-dots span:nth-child(2) {
-    animation-delay: 0.18s;
+    animation-delay: 0.16s;
 }
 
 .cm-loading-dots span:nth-child(3) {
-    animation-delay: 0.36s;
+    animation-delay: 0.32s;
 }
 
 @keyframes cm-bounce {
@@ -565,8 +521,8 @@
     0%,
     80%,
     100% {
-        transform: scale(0.5);
-        opacity: 0.4;
+        transform: scale(0.45);
+        opacity: 0.35;
     }
 
     40% {
@@ -576,25 +532,24 @@
 }
 
 .cm-loading-text {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    letter-spacing: 0.02em;
+    font-size: 0.78rem;
+    color: var(--text-2);
 }
 
-/* ── Error dialog ────────────────────────────────────────────────────────── */
+/* ── Error Dialog — rendered via React portal on document.body ────────── */
 .cm-dialog-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 100;
+    z-index: 9999;
     padding: 1rem;
-    animation: cm-fade-in 0.15s ease;
+    animation: cm-fade 0.15s ease;
 }
 
-@keyframes cm-fade-in {
+@keyframes cm-fade {
     from {
         opacity: 0;
     }
@@ -605,22 +560,19 @@
 }
 
 .cm-dialog {
-    background: var(--card);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 1.4rem 1.5rem;
-    max-width: 420px;
     width: 100%;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.9rem;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-    animation: cm-slide-up 0.18s ease;
+    max-width: 400px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border);
+    animation: cm-up 0.17s ease;
+    overflow: hidden;
 }
 
-@keyframes cm-slide-up {
+@keyframes cm-up {
     from {
-        transform: translateY(12px);
+        transform: translateY(10px);
         opacity: 0;
     }
 
@@ -630,42 +582,74 @@
     }
 }
 
-.cm-dialog-icon {
-    color: #fb7185;
-    flex-shrink: 0;
-    margin-top: 2px;
+.cm-dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 1rem 1.1rem 0.8rem;
+    border-bottom: 1px solid var(--border);
 }
 
-.cm-dialog-body {
-    flex: 1;
+.cm-dialog-icon-wrap {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(251, 113, 133, 0.12);
+    border: 1px solid rgba(251, 113, 133, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fb7185;
+    flex-shrink: 0;
 }
 
 .cm-dialog-title {
-    font-size: 0.85rem;
+    flex: 1;
+    font-size: 0.88rem;
     font-weight: 700;
     color: var(--text);
-    margin: 0 0 0.35rem;
-}
-
-.cm-dialog-msg {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    line-height: 1.55;
-    margin: 0;
 }
 
 .cm-dialog-close {
     background: transparent;
     border: none;
-    color: var(--text-muted);
+    color: var(--text-3);
     cursor: pointer;
-    padding: 0.1rem;
     display: flex;
     align-items: center;
-    flex-shrink: 0;
+    padding: 0.2rem;
+    border-radius: 4px;
     transition: color 0.15s;
+    flex-shrink: 0;
 }
 
 .cm-dialog-close:hover {
     color: var(--text);
+}
+
+.cm-dialog-msg {
+    padding: 0.85rem 1.1rem;
+    font-size: 0.8rem;
+    color: var(--text-2);
+    line-height: 1.6;
+}
+
+.cm-dialog-btn {
+    display: block;
+    width: calc(100% - 2.2rem);
+    margin: 0 1.1rem 1rem;
+    padding: 0.5rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.cm-dialog-btn:hover {
+    background: var(--bg);
+    border-color: var(--text-3);
 }

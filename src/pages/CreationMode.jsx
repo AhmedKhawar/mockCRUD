@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import './CreationMode.css'
 
 const DATA_TYPES = ['String', 'Number', 'Boolean', 'Array', 'Object']
@@ -20,34 +21,34 @@ const BrainIcon = () => (
         <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5V5a2 2 0 0 0 4 0c0-1.1.9-2 2-2a2 2 0 0 1 0 4c0 .37-.1.72-.27 1.03A4 4 0 0 1 16 12a4 4 0 0 1-2 3.46V20a1 1 0 0 1-2 0v-3H8v3a1 1 0 0 1-2 0v-4.54A4 4 0 0 1 4 12a4 4 0 0 1 1.73-3.27A2 2 0 0 0 4 7a2 2 0 0 1 0-4 2 2 0 0 1 2 2 2 2 0 0 0 4 0V4.5A2.5 2.5 0 0 1 9.5 2z" />
     </svg>
 )
-const XIcon = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-)
-const AlertIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
-    </svg>
-)
 
-// ── Error Dialog ───────────────────────────────────────────────────────────
+// ── Error Dialog (rendered via portal — avoids overflow:hidden clipping) ───
 function ErrorDialog({ message, onClose }) {
-    return (
+    return createPortal(
         <div className="cm-dialog-backdrop" onClick={onClose}>
             <div className="cm-dialog" onClick={e => e.stopPropagation()}>
-                <div className="cm-dialog-icon"><AlertIcon /></div>
-                <div className="cm-dialog-body">
-                    <p className="cm-dialog-title">Generation Failed</p>
-                    <p className="cm-dialog-msg">{message}</p>
+                <div className="cm-dialog-header">
+                    <div className="cm-dialog-icon-wrap">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
+                    </div>
+                    <span className="cm-dialog-title">Generation Failed</span>
+                    <button className="cm-dialog-close" onClick={onClose} aria-label="Close">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
                 </div>
-                <button className="cm-dialog-close" onClick={onClose}><XIcon /></button>
+                <p className="cm-dialog-msg">{message}</p>
+                <button className="cm-dialog-btn" onClick={onClose}>Dismiss</button>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }
 
-// ── Animated loader dots ───────────────────────────────────────────────────
+// ── Animated loader overlay ────────────────────────────────────────────────
 function LoadingOverlay() {
     return (
         <div className="cm-loading-overlay">
@@ -73,33 +74,41 @@ function Toggle({ checked, onChange, id }) {
     )
 }
 
+// ── Checkbox ──────────────────────────────────────────────────────────────
+function Checkbox({ checked, onChange, label, className = '' }) {
+    return (
+        <label className={`cm-checkbox-label ${className}`}>
+            <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} className="cm-checkbox-native" />
+            <span className="cm-checkbox-box">{checked && (
+                <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
+                    <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+            )}</span>
+            {label && <span className="cm-checkbox-text">{label}</span>}
+        </label>
+    )
+}
+
 // ── Single field row ───────────────────────────────────────────────────────
 function FieldRow({ field, onChange, onDelete }) {
     return (
         <div className="cm-field-row">
             <input
-                className="cm-field-input cm-field-name"
+                className="cm-field-input"
                 placeholder="fieldName"
                 value={field.name}
                 onChange={e => onChange({ ...field, name: e.target.value })}
             />
-            <div className="cm-select-wrap">
-                <select
-                    className="cm-field-select"
-                    value={field.type}
-                    onChange={e => onChange({ ...field, type: e.target.value })}
-                >
-                    {DATA_TYPES.map(t => <option key={t}>{t}</option>)}
-                </select>
+            <select
+                className="cm-field-select"
+                value={field.type}
+                onChange={e => onChange({ ...field, type: e.target.value })}
+            >
+                {DATA_TYPES.map(t => <option key={t}>{t}</option>)}
+            </select>
+            <div className="cm-field-req-cell">
+                <Checkbox checked={field.required} onChange={v => onChange({ ...field, required: v })} />
             </div>
-            <label className="cm-field-required" title="Required">
-                <input
-                    type="checkbox"
-                    checked={field.required}
-                    onChange={e => onChange({ ...field, required: e.target.checked })}
-                />
-                <span className="cm-req-box" />
-            </label>
             <button className="cm-field-del" onClick={onDelete} title="Delete field">
                 <TrashIcon />
             </button>
@@ -113,7 +122,7 @@ function ResourceCard({ resource, index, onChange, onDelete }) {
         const fields = resource.fields.map((f, i) => i === fi ? updated : f)
         onChange({ ...resource, fields })
     }
-    const deleteField = (fi) => onChange({ ...resource, fields: resource.fields.filter((_, i) => i !== fi) })
+    const deleteField = fi => onChange({ ...resource, fields: resource.fields.filter((_, i) => i !== fi) })
     const addField = () => onChange({
         ...resource,
         fields: [...resource.fields, { id: Date.now(), name: '', type: 'String', required: false }]
@@ -122,39 +131,39 @@ function ResourceCard({ resource, index, onChange, onDelete }) {
     return (
         <div className="cm-resource-card">
             <div className="cm-resource-header">
-                <span className="cm-resource-label">RESOURCE #{index + 1}</span>
+                <span className="cm-resource-num">#{index + 1}</span>
                 <input
                     className="cm-resource-name-input"
                     placeholder="resourceName"
                     value={resource.name}
                     onChange={e => onChange({ ...resource, name: e.target.value })}
                 />
-                <label className="cm-infer-label">
-                    <input
-                        type="checkbox"
-                        checked={resource.inferFields}
-                        onChange={e => onChange({ ...resource, inferFields: e.target.checked, fields: e.target.checked ? [] : resource.fields })}
-                    />
-                    <span className="cm-infer-check" />
-                    <span className="cm-infer-text">Infer fields on own</span>
-                </label>
-                <label className="cm-count-label">
-                    Count:
-                    <input
-                        className="cm-count-input"
-                        type="number"
-                        min={1}
-                        max={50}
-                        value={resource.count}
-                        onChange={e => onChange({ ...resource, count: Math.max(1, Math.min(50, Number(e.target.value))) })}
-                    />
-                </label>
-                <span className="cm-auth-label">Auth</span>
-                <Toggle
-                    id={`auth-${resource.id}`}
-                    checked={resource.auth}
-                    onChange={v => onChange({ ...resource, auth: v })}
+                <Checkbox
+                    checked={resource.inferFields}
+                    onChange={v => onChange({ ...resource, inferFields: v, fields: v ? [] : resource.fields })}
+                    label="Infer fields"
                 />
+                {resource.inferFields && (
+                    <label className="cm-count-label">
+                        Count
+                        <input
+                            className="cm-count-input"
+                            type="number"
+                            min={1}
+                            max={50}
+                            value={resource.count}
+                            onChange={e => onChange({ ...resource, count: Math.max(1, Math.min(50, Number(e.target.value))) })}
+                        />
+                    </label>
+                )}
+                <div className="cm-auth-wrap">
+                    <span className="cm-auth-label">Auth</span>
+                    <Toggle
+                        id={`auth-${resource.id}`}
+                        checked={resource.auth}
+                        onChange={v => onChange({ ...resource, auth: v })}
+                    />
+                </div>
                 {index > 0 && (
                     <button className="cm-resource-del" onClick={onDelete} title="Remove resource">
                         <TrashIcon />
@@ -165,22 +174,16 @@ function ResourceCard({ resource, index, onChange, onDelete }) {
             {resource.inferFields ? (
                 <div className="cm-infer-banner">
                     <BrainIcon />
-                    <div>
-                        <span className="cm-infer-banner-title">Field Inputs Auto-Locked for AI Generation</span>
-                        <span className="cm-infer-banner-desc">
-                            The model will auto-generate optimal attributes, infer data types, assign constraints,
-                            and connect foreign keys to '{resource.name || 'this resource'}'.
-                        </span>
-                    </div>
+                    <span>AI will auto-generate fields, types and foreign-key connections for <strong>{resource.name || 'this resource'}</strong></span>
                 </div>
             ) : (
                 <div className="cm-fields-section">
                     {resource.fields.length > 0 && (
                         <div className="cm-field-header-row">
-                            <span>FIELD NAME</span>
-                            <span>DATA TYPE</span>
-                            <span>REQUIRED</span>
-                            <span>DEL</span>
+                            <span>Field name</span>
+                            <span>Type</span>
+                            <span>Req</span>
+                            <span />
                         </div>
                     )}
                     {resource.fields.map((f, fi) => (
@@ -200,7 +203,6 @@ function ResourceCard({ resource, index, onChange, onDelete }) {
     )
 }
 
-// ── newResource factory ────────────────────────────────────────────────────
 const newResource = () => ({
     id: Date.now() + Math.random(),
     name: '',
@@ -217,7 +219,6 @@ export default function CreationMode({ onSubmit, loading }) {
     const [systemName, setSystemName] = useState('')
     const [error, setError] = useState(null)
 
-    // Reset helpers
     const resetCustom = () => setResources([newResource()])
     const resetInfer = () => setSystemName('')
 
@@ -225,7 +226,7 @@ export default function CreationMode({ onSubmit, loading }) {
         setResources(prev => prev.map((r, i) => i === index ? updated : r))
     }, [])
 
-    const deleteResource = useCallback((index) => {
+    const deleteResource = useCallback(index => {
         setResources(prev => prev.filter((_, i) => i !== index))
     }, [])
 
@@ -245,7 +246,6 @@ export default function CreationMode({ onSubmit, loading }) {
 
         try {
             await onSubmit(payload)
-            // Reset the form on success
             if (tab === 'custom') resetCustom()
             else resetInfer()
         } catch (err) {
@@ -253,38 +253,27 @@ export default function CreationMode({ onSubmit, loading }) {
         }
     }
 
-    const manualCount = resources.filter(r => !r.inferFields).length
-    const inferCount = resources.filter(r => r.inferFields).length
     const canSubmitCustom = resources.length > 0 && resources.every(r => r.name.trim())
     const canSubmitInfer = systemName.trim().length > 0
+    const inferCount = resources.filter(r => r.inferFields).length
+    const manualCount = resources.filter(r => !r.inferFields).length
 
     return (
         <div className="cm-root">
-            {/* Error dialog */}
             {error && <ErrorDialog message={error} onClose={() => setError(null)} />}
-
-            {/* Loading overlay */}
             {loading && <LoadingOverlay />}
 
-            {/* Tab switcher */}
+            {/* Tabs */}
             <div className="cm-tabs">
-                <button
-                    className={`cm-tab ${tab === 'custom' ? 'cm-tab-active' : ''}`}
-                    onClick={() => setTab('custom')}
-                    disabled={loading}
-                >
+                <button className={`cm-tab${tab === 'custom' ? ' cm-tab-active' : ''}`} onClick={() => setTab('custom')} disabled={loading}>
                     Add Custom Resources
                 </button>
-                <button
-                    className={`cm-tab ${tab === 'infer' ? 'cm-tab-active' : ''}`}
-                    onClick={() => setTab('infer')}
-                    disabled={loading}
-                >
+                <button className={`cm-tab${tab === 'infer' ? ' cm-tab-active' : ''}`} onClick={() => setTab('infer')} disabled={loading}>
                     Generate Full System via Prompt
                 </button>
             </div>
 
-            {/* ── Custom tab ── */}
+            {/* Custom tab */}
             {tab === 'custom' && (
                 <div className="cm-body">
                     {resources.map((r, i) => (
@@ -296,51 +285,40 @@ export default function CreationMode({ onSubmit, loading }) {
                             onDelete={() => deleteResource(i)}
                         />
                     ))}
-
                     <button className="cm-add-resource-btn" onClick={addResource} disabled={loading}>
                         <PlusIcon /> Add Another Resource
                     </button>
-
                     <div className="cm-footer">
                         <span className="cm-footer-stats">
-                            ● {resources.length} Resource{resources.length !== 1 ? 's' : ''} Configured
-                            {' '}({manualCount} Manual, {inferCount} Inferred)
+                            {resources.length} Resource{resources.length !== 1 ? 's' : ''} &nbsp;·&nbsp;
+                            {manualCount} Manual &nbsp;·&nbsp; {inferCount} Inferred
                         </span>
-                        <button
-                            className="btn btn-teal cm-submit-btn"
-                            onClick={handleSubmit}
-                            disabled={loading || !canSubmitCustom}
-                        >
+                        <button className="btn btn-teal cm-submit-btn" onClick={handleSubmit} disabled={loading || !canSubmitCustom}>
                             Create Mock Resources
                         </button>
                     </div>
                 </div>
             )}
 
-            {/* ── Infer tab ── */}
+            {/* Infer tab */}
             {tab === 'infer' && (
-                <div className="cm-body cm-infer-body">
+                <div className="cm-body">
                     <div className="cm-infer-section">
                         <label className="cm-infer-section-label">System Name</label>
                         <input
-                            className="form-input cm-system-input"
+                            className="cm-system-input"
                             placeholder="e.g. student management system, hospital records, e-commerce platform…"
                             value={systemName}
                             onChange={e => setSystemName(e.target.value)}
                             disabled={loading}
                         />
                         <p className="cm-infer-hint">
-                            Backend will verify and infer all joins, fields, relationships, and data types automatically.
-                            No manual configuration needed.
+                            The AI will verify the system, infer all entities, fields, types, and relational foreign keys automatically.
                         </p>
                     </div>
                     <div className="cm-footer">
                         <span />
-                        <button
-                            className="btn btn-teal cm-submit-btn"
-                            onClick={handleSubmit}
-                            disabled={loading || !canSubmitInfer}
-                        >
+                        <button className="btn btn-teal cm-submit-btn" onClick={handleSubmit} disabled={loading || !canSubmitInfer}>
                             ⚡ Generate Full System
                         </button>
                     </div>
