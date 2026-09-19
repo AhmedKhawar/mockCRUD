@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import Navbar from '../components/Navbar'
+import CreationMode from './CreationMode'
 import './ProjectView.css'
 
 const API = 'https://mock-crud-backend.vercel.app'
@@ -278,22 +279,8 @@ export default function ProjectView() {
     const [resources, setResources] = useState([])
     const [loading, setLoading] = useState(true)
     const [loadError, setLoadError] = useState('')
-    const PREFIX = 'Create '
-    const [prompt, setPrompt] = useState('')
     const [generating, setGenerating] = useState(false)
     const [genError, setGenError] = useState('')
-
-    const handlePromptChange = e => {
-        const val = e.target.value
-        if (!val.startsWith(PREFIX)) {
-            setPrompt('')
-        } else {
-            setPrompt(val.slice(PREFIX.length))
-        }
-    }
-
-    // Ghost text and hint button are visible only when suffix is empty
-    const ghostVisible = prompt.trim().length === 0
 
     useEffect(() => {
         if (!token) { navigate('/signin'); return }
@@ -317,21 +304,18 @@ export default function ProjectView() {
         finally { setLoading(false) }
     }
 
-    const generateResource = async e => {
-        e.preventDefault()
-        if (!prompt.trim()) return
+    // Receives the structured payload from CreationMode
+    const generateResource = async (payload) => {
         setGenError(''); setGenerating(true)
-        const fullDescription = PREFIX + prompt
         try {
             const res = await fetch(`${API}/api/resource`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ projectId, description: fullDescription }),
+                body: JSON.stringify({ projectId, ...payload }),
             })
             const data = await res.json()
             if (!res.ok) throw new Error(data.message || 'Generation failed')
-            setPrompt('')
-            const newCards = data.resources.map(r => ({
+            const newCards = (data.resources || []).map(r => ({
                 id: r.id,
                 name: r.name,
                 auth: r.auth ?? false,
@@ -339,7 +323,7 @@ export default function ProjectView() {
                 endpoints: r.spec?.endpoints || [],
             }))
             const names = newCards.map(r => `"${r.name}"`).join(', ')
-            show(`${newCards.length > 1 ? `${newCards.length} resources` : names} generated!`, 'success')
+            show(`${newCards.length > 1 ? `${newCards.length} resources` : names} created!`, 'success')
             setResources(prev => [...newCards, ...prev])
         } catch (err) { setGenError(err.message) }
         finally { setGenerating(false) }
@@ -387,47 +371,9 @@ export default function ProjectView() {
                     </div>
                 </div>
 
-                {/* Generate form */}
-                <form onSubmit={generateResource} className="gen-form card">
-                    <div className="gen-form-top">
-                        <p className="gen-form-label">✦ Add a resource</p>
-                        {/* Fades when user starts typing */}
-                        <button
-                            type="button"
-                            className={`prompt-hint-btn${ghostVisible ? '' : ' hidden'}`}
-                            onClick={() => window.dispatchEvent(new CustomEvent('open-prompt-dialog'))}
-                            tabIndex={ghostVisible ? 0 : -1}
-                            aria-hidden={!ghostVisible}
-                        >
-                            <SparkleIcon /> Need help prompting?
-                        </button>
-                    </div>
-
-                    {/* Textarea with ghost overlay */}
-                    <div className="prompt-input-wrap">
-                        <textarea
-                            className="form-textarea prompt-textarea"
-                            value={PREFIX + prompt}
-                            onChange={handlePromptChange}
-                            disabled={generating}
-                            rows={3}
-                            spellCheck={false}
-                        />
-                        {/* Ghost text — mirrors textarea content, fades when user types */}
-                        <div className={`prompt-ghost-overlay${ghostVisible ? '' : ' hidden'}`} aria-hidden="true">
-                            <span className="ghost-prefix">Create </span>
-                            <span className="ghost-hint">a blog endpoint with title, body, author and tags…</span>
-                        </div>
-                    </div>
-
-                    {genError && <div className="alert alert-error">{genError}</div>}
-                    <div className="gen-form-footer">
-                        <button type="submit" className="btn btn-teal"
-                            disabled={generating || !prompt.trim()}>
-                            {generating ? <><span className="spinner" /> Generating…</> : 'Generate resource'}
-                        </button>
-                    </div>
-                </form>
+                {/* Creation Mode */}
+                <CreationMode onSubmit={generateResource} loading={generating} />
+                {genError && <div className="alert alert-error" style={{ marginTop: '0.75rem' }}>{genError}</div>}
 
                 {/* Auth API panel */}
                 {!loading && resources.some(r => r.auth) && project?.slug && (

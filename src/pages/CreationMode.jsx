@@ -178,19 +178,15 @@ export default function CreationMode({ onSubmit, loading }) {
     const [showPayload, setShowPayload] = useState(false)
 
     // Build payload for Option 1
+    // Manual resource  → { name, auth, fields: [{name, type, required}] }
+    // Inferred resource → { name, auth, inferFields: true, count }
     const customPayload = {
         mode: 'custom',
-        resources: resources.map(r => ({
-            name: r.name,
-            auth: r.auth,
-            inferFields: r.inferFields,
-            count: r.count,
-            fields: r.inferFields ? [] : r.fields.map(f => ({
-                name: f.name,
-                type: f.type,
-                required: f.required,
-            })),
-        })),
+        resources: resources.map(r =>
+            r.inferFields
+                ? { name: r.name, auth: r.auth, inferFields: true, count: r.count }
+                : { name: r.name, auth: r.auth, fields: r.fields.map(f => ({ name: f.name, type: f.type, required: f.required })) }
+        ),
     }
 
     // Build payload for Option 2
