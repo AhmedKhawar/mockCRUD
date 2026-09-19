@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
+import CreationMode from './CreationMode'
 import './MainApp.css'
 
 const API = 'https://mock-crud-backend.vercel.app'
@@ -51,31 +52,30 @@ function EndpointRow({ endpoint, baseUrl }) {
 
 export default function MainApp() {
     const { token } = useAuth()
-    const [prompt, setPrompt] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [project, setProject] = useState(null)
+    const [lastPayload, setLastPayload] = useState(null)
 
     if (!token) return <Navigate to="/signin" replace />
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        if (!prompt.trim()) return
+    const handleSubmit = async (payload) => {
         setError('')
         setProject(null)
+        setLastPayload(payload)
         setLoading(true)
 
         try {
-            const res = await fetch(`${API}/api/project`, {
+            const res = await fetch(`${API}/api/resources/generate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ description: prompt }),
+                body: JSON.stringify(payload),
             })
             const data = await res.json()
-            if (!res.ok) throw new Error(data.message || 'Failed to create project')
+            if (!res.ok) throw new Error(data.message || 'Failed to create resources')
             setProject(data.project)
         } catch (err) {
             setError(err.message)
@@ -93,39 +93,14 @@ export default function MainApp() {
             <Navbar />
 
             <div className="main-content">
-                {/* Prompt section */}
+                {/* Header */}
                 <section className="prompt-section">
                     <div className="prompt-header">
                         <h1>Generate a Mock API</h1>
-                        <p>Describe what data you need — the AI will design and deploy your API.</p>
+                        <p>Configure your resources manually, or let the AI infer everything from a system name.</p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="prompt-form">
-                        <div className="prompt-input-wrap">
-                            <textarea
-                                className="prompt-textarea"
-                                rows={4}
-                                placeholder="e.g. Create an API for a student management system with name, age, GPA, and email fields…"
-                                value={prompt}
-                                onChange={(e) => setPrompt(e.target.value)}
-                                disabled={loading}
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="btn-primary prompt-submit"
-                            disabled={loading || !prompt.trim()}
-                        >
-                            {loading ? (
-                                <>
-                                    <span className="spinner" />
-                                    Generating…
-                                </>
-                            ) : (
-                                <>⚡ Generate API</>
-                            )}
-                        </button>
-                    </form>
+                    <CreationMode onSubmit={handleSubmit} loading={loading} />
 
                     {error && <p className="error-msg" style={{ marginTop: '1rem' }}>{error}</p>}
                 </section>
