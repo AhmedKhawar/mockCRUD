@@ -280,7 +280,6 @@ export default function ProjectView() {
     const [loading, setLoading] = useState(true)
     const [loadError, setLoadError] = useState('')
     const [generating, setGenerating] = useState(false)
-    const [genError, setGenError] = useState('')
 
     useEffect(() => {
         if (!token) { navigate('/signin'); return }
@@ -306,7 +305,7 @@ export default function ProjectView() {
 
     // Receives the structured payload from CreationMode
     const generateResource = async (payload) => {
-        setGenError(''); setGenerating(true)
+        setGenerating(true)
         try {
             const res = await fetch(`${API}/api/resource`, {
                 method: 'POST',
@@ -325,8 +324,10 @@ export default function ProjectView() {
             const names = newCards.map(r => `"${r.name}"`).join(', ')
             show(`${newCards.length > 1 ? `${newCards.length} resources` : names} created!`, 'success')
             setResources(prev => [...newCards, ...prev])
-        } catch (err) { setGenError(err.message) }
-        finally { setGenerating(false) }
+        } catch (err) {
+            // Re-throw so CreationMode's error dialog displays it
+            throw err
+        } finally { setGenerating(false) }
     }
 
     const deleteResource = async (resourceId) => {
@@ -373,7 +374,6 @@ export default function ProjectView() {
 
                 {/* Creation Mode */}
                 <CreationMode onSubmit={generateResource} loading={generating} />
-                {genError && <div className="alert alert-error" style={{ marginTop: '0.75rem' }}>{genError}</div>}
 
                 {/* Auth API panel */}
                 {!loading && resources.some(r => r.auth) && project?.slug && (

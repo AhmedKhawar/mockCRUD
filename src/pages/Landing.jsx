@@ -40,70 +40,60 @@ export default function Landing() {
                         </div>
                     </div>
 
-                    {/* ── Dark Flow Hero ── */}
-                    <div className="flow-hero-card">
-                        {/* Left: Prompt */}
-                        <div className="flow-hero-left">
-                            <p className="flow-hero-section-label">PROMPT &amp; ENDPOINTS</p>
+                    {/* ── How it works ── */}
+                    <div className="flow-how-section">
+                        <p className="flow-how-label">HOW IT WORKS</p>
+                        <div className="flow-how-steps">
 
-                            <div className="flow-hero-prompt-wrap">
-                                <div className="flow-hero-prompt-inner">
-                                    <div className="flow-hero-prompt-line">
-                                        <span className="flow-hero-prompt-cursor">▌</span>
-                                        <span className="flow-hero-create">Create&nbsp;</span>
-                                        <span className="flow-hero-prompt-text">a user management system</span>
+                            <div className="flow-how-step">
+                                <div className="flow-how-num">1</div>
+                                <div className="flow-how-content">
+                                    <h3>Define your resources</h3>
+                                    <p>
+                                        Use the <strong>Custom Builder</strong> to hand-craft resource names and fields,
+                                        or type a system name like <em>"Hospital Management System"</em> and let AI infer everything.
+                                    </p>
+                                    <div className="flow-how-modes">
+                                        <span className="flow-how-mode-chip">✏️ Manual Builder</span>
+                                        <span className="flow-how-mode-chip">⚡ AI Inference</span>
                                     </div>
-                                    <div className="flow-hero-prompt-hint">with name, email, role, and createdAt</div>
                                 </div>
-                                <div className="flow-hero-ai-badge">⚡ AI</div>
                             </div>
 
-                            <div className="flow-hero-arrows">
-                                <span className="flow-hero-arrow-char">›</span>
-                                <span className="flow-hero-arrow-char">›</span>
-                                <span className="flow-hero-arrow-char">›</span>
-                            </div>
-                        </div>
+                            <div className="flow-how-connector" />
 
-                        {/* Divider */}
-                        <div className="flow-hero-divider" />
-
-                        {/* Right: Endpoints */}
-                        <div className="flow-hero-right">
-                            <p className="flow-hero-section-label">5 LIVE ENDPOINTS</p>
-                            <div className="flow-hero-ep-list">
-                                {FLOW_ENDPOINTS.map((ep, i) => (
-                                    <div
-                                        key={i}
-                                        className="flow-hero-ep-row"
-                                        style={{ '--ep-color': ep.color, '--ep-bg': ep.bg }}
-                                    >
-                                        <span className="flow-hero-ep-badge">{ep.method}</span>
-                                        <div className="flow-hero-ep-info">
-                                            <span className="flow-hero-ep-label">{ep.label}</span>
-                                            <code className="flow-hero-ep-path">{ep.path}</code>
-                                        </div>
+                            <div className="flow-how-step">
+                                <div className="flow-how-num">2</div>
+                                <div className="flow-how-content">
+                                    <h3>AI validates &amp; generates</h3>
+                                    <p>
+                                        The backend verifies entity names, infers cross-resource foreign keys,
+                                        assigns data types, and builds a full CRUD spec — all in seconds.
+                                    </p>
+                                    <div className="flow-how-ep-row-mini">
+                                        {['GET', 'POST', 'PUT', 'DELETE'].map(m => (
+                                            <span key={m} className={`flow-how-badge flow-how-badge-${m}`}>{m}</span>
+                                        ))}
                                     </div>
-                                ))}
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div className="landing-features">
-                        <div className="landing-feature">
-                            <span className="feat-icon">📝</span>
-                            <h3>Describe, don't configure</h3>
-                            <p>Type "a blog with posts and comments" — get real endpoints back.</p>
-                        </div>
-                        <div className="landing-feature">
-                            <span className="feat-icon">🔗</span>
-                            <h3>Live URLs instantly</h3>
-                            <p>Every resource gets a permanent mock URL you can <code className="mono">curl</code> right away.</p>
-                        </div>
-                        <div className="landing-feature">
-                            <span className="feat-icon">📁</span>
-                            <h3>Projects &amp; resources</h3>
-                            <p>Group related APIs into projects. Add as many resources as you need.</p>
+                            <div className="flow-how-connector" />
+
+                            <div className="flow-how-step">
+                                <div className="flow-how-num">3</div>
+                                <div className="flow-how-content">
+                                    <h3>Live endpoints, instantly</h3>
+                                    <p>
+                                        Every resource gets a permanent mock URL. Hit it with Postman, curl, or
+                                        your frontend — no server config, no waiting.
+                                    </p>
+                                    <code className="flow-how-url">
+                                        /m/<span className="hl">slug</span>/users
+                                    </code>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -111,9 +101,10 @@ export default function Landing() {
                         <p className="landing-demo-label">Example mock URL</p>
                         <div className="landing-demo-url">
                             <span className="badge badge-GET">GET</span>
-                            <code className="mono landing-url-text">https://mock-crud-blond.vercel.app/m/<span className="hl">slug</span>/users</code>
+                            <code className="mono landing-url-text">https://mock-crud-backend.vercel.app/m/<span className="hl">slug</span>/users</code>
                         </div>
                     </div>
+
                 </div>
             </div>
         </>

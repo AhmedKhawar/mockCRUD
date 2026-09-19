@@ -20,6 +20,46 @@ const BrainIcon = () => (
         <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5V5a2 2 0 0 0 4 0c0-1.1.9-2 2-2a2 2 0 0 1 0 4c0 .37-.1.72-.27 1.03A4 4 0 0 1 16 12a4 4 0 0 1-2 3.46V20a1 1 0 0 1-2 0v-3H8v3a1 1 0 0 1-2 0v-4.54A4 4 0 0 1 4 12a4 4 0 0 1 1.73-3.27A2 2 0 0 0 4 7a2 2 0 0 1 0-4 2 2 0 0 1 2 2 2 2 0 0 0 4 0V4.5A2.5 2.5 0 0 1 9.5 2z" />
     </svg>
 )
+const XIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+)
+const AlertIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+)
+
+// ── Error Dialog ───────────────────────────────────────────────────────────
+function ErrorDialog({ message, onClose }) {
+    return (
+        <div className="cm-dialog-backdrop" onClick={onClose}>
+            <div className="cm-dialog" onClick={e => e.stopPropagation()}>
+                <div className="cm-dialog-icon"><AlertIcon /></div>
+                <div className="cm-dialog-body">
+                    <p className="cm-dialog-title">Generation Failed</p>
+                    <p className="cm-dialog-msg">{message}</p>
+                </div>
+                <button className="cm-dialog-close" onClick={onClose}><XIcon /></button>
+            </div>
+        </div>
+    )
+}
+
+// ── Animated loader dots ───────────────────────────────────────────────────
+function LoadingOverlay() {
+    return (
+        <div className="cm-loading-overlay">
+            <div className="cm-loading-inner">
+                <div className="cm-loading-dots">
+                    <span /><span /><span />
+                </div>
+                <p className="cm-loading-text">Generating resources…</p>
+            </div>
+        </div>
+    )
+}
 
 // ── Toggle switch ──────────────────────────────────────────────────────────
 function Toggle({ checked, onChange, id }) {
@@ -172,30 +212,14 @@ const newResource = () => ({
 
 // ── Main component ─────────────────────────────────────────────────────────
 export default function CreationMode({ onSubmit, loading }) {
-    const [tab, setTab] = useState('custom') // 'custom' | 'infer'
+    const [tab, setTab] = useState('custom')
     const [resources, setResources] = useState([newResource()])
     const [systemName, setSystemName] = useState('')
-    const [showPayload, setShowPayload] = useState(false)
+    const [error, setError] = useState(null)
 
-    // Build payload for Option 1
-    // Manual resource  → { name, auth, fields: [{name, type, required}] }
-    // Inferred resource → { name, auth, inferFields: true, count }
-    const customPayload = {
-        mode: 'custom',
-        resources: resources.map(r =>
-            r.inferFields
-                ? { name: r.name, auth: r.auth, inferFields: true, count: r.count }
-                : { name: r.name, auth: r.auth, fields: r.fields.map(f => ({ name: f.name, type: f.type, required: f.required })) }
-        ),
-    }
-
-    // Build payload for Option 2
-    const inferPayload = {
-        mode: 'infer',
-        systemName: systemName.trim(),
-    }
-
-    const currentPayload = tab === 'custom' ? customPayload : inferPayload
+    // Reset helpers
+    const resetCustom = () => setResources([newResource()])
+    const resetInfer = () => setSystemName('')
 
     const updateResource = useCallback((index, updated) => {
         setResources(prev => prev.map((r, i) => i === index ? updated : r))
@@ -207,37 +231,60 @@ export default function CreationMode({ onSubmit, loading }) {
 
     const addResource = () => setResources(prev => [...prev, newResource()])
 
-    const handleSubmit = () => {
-        if (onSubmit) onSubmit(currentPayload)
+    const handleSubmit = async () => {
+        const payload = tab === 'custom'
+            ? {
+                mode: 'custom',
+                resources: resources.map(r =>
+                    r.inferFields
+                        ? { name: r.name, auth: r.auth, inferFields: true, count: r.count }
+                        : { name: r.name, auth: r.auth, fields: r.fields.map(f => ({ name: f.name, type: f.type, required: f.required })) }
+                ),
+            }
+            : { mode: 'infer', systemName: systemName.trim() }
+
+        try {
+            await onSubmit(payload)
+            // Reset the form on success
+            if (tab === 'custom') resetCustom()
+            else resetInfer()
+        } catch (err) {
+            setError(err.message || 'Something went wrong')
+        }
     }
 
-    // Stats for footer
     const manualCount = resources.filter(r => !r.inferFields).length
     const inferCount = resources.filter(r => r.inferFields).length
-
-    // Validate for option 1
     const canSubmitCustom = resources.length > 0 && resources.every(r => r.name.trim())
     const canSubmitInfer = systemName.trim().length > 0
 
     return (
         <div className="cm-root">
+            {/* Error dialog */}
+            {error && <ErrorDialog message={error} onClose={() => setError(null)} />}
+
+            {/* Loading overlay */}
+            {loading && <LoadingOverlay />}
+
             {/* Tab switcher */}
             <div className="cm-tabs">
                 <button
                     className={`cm-tab ${tab === 'custom' ? 'cm-tab-active' : ''}`}
                     onClick={() => setTab('custom')}
+                    disabled={loading}
                 >
-                    Option 1: Add Custom Resources
+                    Add Custom Resources
                 </button>
                 <button
                     className={`cm-tab ${tab === 'infer' ? 'cm-tab-active' : ''}`}
                     onClick={() => setTab('infer')}
+                    disabled={loading}
                 >
-                    Option 2: Generate Full System via Prompt
+                    Generate Full System via Prompt
                 </button>
             </div>
 
-            {/* ── Option 1 ── */}
+            {/* ── Custom tab ── */}
             {tab === 'custom' && (
                 <div className="cm-body">
                     {resources.map((r, i) => (
@@ -250,7 +297,7 @@ export default function CreationMode({ onSubmit, loading }) {
                         />
                     ))}
 
-                    <button className="cm-add-resource-btn" onClick={addResource}>
+                    <button className="cm-add-resource-btn" onClick={addResource} disabled={loading}>
                         <PlusIcon /> Add Another Resource
                     </button>
 
@@ -264,13 +311,13 @@ export default function CreationMode({ onSubmit, loading }) {
                             onClick={handleSubmit}
                             disabled={loading || !canSubmitCustom}
                         >
-                            {loading ? <><span className="spinner" /> Creating…</> : 'Create Mock Resources'}
+                            Create Mock Resources
                         </button>
                     </div>
                 </div>
             )}
 
-            {/* ── Option 2 ── */}
+            {/* ── Infer tab ── */}
             {tab === 'infer' && (
                 <div className="cm-body cm-infer-body">
                     <div className="cm-infer-section">
@@ -280,6 +327,7 @@ export default function CreationMode({ onSubmit, loading }) {
                             placeholder="e.g. student management system, hospital records, e-commerce platform…"
                             value={systemName}
                             onChange={e => setSystemName(e.target.value)}
+                            disabled={loading}
                         />
                         <p className="cm-infer-hint">
                             Backend will verify and infer all joins, fields, relationships, and data types automatically.
@@ -293,36 +341,11 @@ export default function CreationMode({ onSubmit, loading }) {
                             onClick={handleSubmit}
                             disabled={loading || !canSubmitInfer}
                         >
-                            {loading ? <><span className="spinner" /> Generating…</> : '⚡ Generate Full System'}
+                            ⚡ Generate Full System
                         </button>
                     </div>
                 </div>
             )}
-
-            {/* ── Sample Payload Panel ── */}
-            <div className="cm-payload-panel">
-                <button className="cm-payload-toggle" onClick={() => setShowPayload(o => !o)}>
-                    <span className="cm-payload-icon">{'</>'}</span>
-                    <span>Sample Request Payload</span>
-                    <svg
-                        className={`cm-payload-chevron ${showPayload ? 'open' : ''}`}
-                        width="13" height="13" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                    >
-                        <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                </button>
-                {showPayload && (
-                    <div className="cm-payload-body">
-                        <div className="cm-payload-label">
-                            What the frontend will send to the backend — POST /api/resources/generate
-                        </div>
-                        <pre className="cm-payload-code">
-                            {JSON.stringify(currentPayload, null, 2)}
-                        </pre>
-                    </div>
-                )}
-            </div>
         </div>
     )
 }
