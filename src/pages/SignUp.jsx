@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -15,6 +15,15 @@ export default function SignUp() {
     const [form, setForm] = useState({ email: '', password: '' })
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+    const [isDark, setIsDark] = useState(() => document.documentElement.getAttribute('data-theme') === 'dark')
+
+    useEffect(() => {
+        const observer = new MutationObserver(() => {
+            setIsDark(document.documentElement.getAttribute('data-theme') === 'dark')
+        })
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+        return () => observer.disconnect()
+    }, [])
 
     const handleGoogleSuccess = async (credentialResponse) => {
         try {
@@ -59,9 +68,11 @@ export default function SignUp() {
                         <GoogleLogin
                             onSuccess={handleGoogleSuccess}
                             onError={() => setError('Google sign up failed')}
-                            theme="filled_black"
-                            shape="pill"
+                            theme={isDark ? 'filled_black' : 'outline'}
+                            shape="rectangular"
                             text="signup_with"
+                            logo_alignment="left"
+                            width="300"
                         />
                     </div>
 
