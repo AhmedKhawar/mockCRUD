@@ -318,12 +318,15 @@ export default function ProjectView() {
                 id: r.id,
                 name: r.name,
                 auth: r.auth ?? false,
+                aiAddedFields: r.aiAddedFields || [],
                 mockUrl: `${API}/m/${project?.slug || ''}/${r.name}`,
                 endpoints: r.spec?.endpoints || [],
             }))
             const names = newCards.map(r => `"${r.name}"`).join(', ')
             show(`${newCards.length > 1 ? `${newCards.length} resources` : names} created!`, 'success')
             setResources(prev => [...newCards, ...prev])
+            // Return newCards so CreationMode can display AI-added FK callouts
+            return newCards
         } catch (err) {
             // Re-throw so CreationMode's error dialog displays it
             throw err

@@ -16,9 +16,14 @@ const TrashIcon = () => (
         <path d="M10 11v6M14 11v6" /><path d="M9 6V4h6v2" />
     </svg>
 )
-const BrainIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5V5a2 2 0 0 0 4 0c0-1.1.9-2 2-2a2 2 0 0 1 0 4c0 .37-.1.72-.27 1.03A4 4 0 0 1 16 12a4 4 0 0 1-2 3.46V20a1 1 0 0 1-2 0v-3H8v3a1 1 0 0 1-2 0v-4.54A4 4 0 0 1 4 12a4 4 0 0 1 1.73-3.27A2 2 0 0 0 4 7a2 2 0 0 1 0-4 2 2 0 0 1 2 2 2 2 0 0 0 4 0V4.5A2.5 2.5 0 0 1 9.5 2z" />
+const SparkIcon = () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+    </svg>
+)
+const InfoIcon = () => (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="8.01" /><line x1="12" y1="12" x2="12" y2="16" />
     </svg>
 )
 
@@ -91,14 +96,26 @@ function Checkbox({ checked, onChange, label, className = '' }) {
 
 // ── Single field row ───────────────────────────────────────────────────────
 function FieldRow({ field, onChange, onDelete }) {
+    const isIdForbidden = field.name.trim().toLowerCase() === 'id'
+
     return (
         <div className="cm-field-row">
-            <input
-                className="cm-field-input"
-                placeholder="fieldName"
-                value={field.name}
-                onChange={e => onChange({ ...field, name: e.target.value })}
-            />
+            <div className="cm-field-name-wrap">
+                <input
+                    className={`cm-field-input${isIdForbidden ? ' cm-field-input--error' : ''}`}
+                    placeholder="fieldName"
+                    value={field.name}
+                    onChange={e => onChange({ ...field, name: e.target.value })}
+                />
+                {isIdForbidden && (
+                    <div className="cm-id-tooltip">
+                        <InfoIcon />
+                        <span className="cm-id-tooltip-text">
+                            MongoDB auto-creates <code>_id</code> for every record (returned as <code>id</code> to clients). For foreign keys use compound names like <code>studentId</code> or <code>userId</code>.
+                        </span>
+                    </div>
+                )}
+            </div>
             <select
                 className="cm-field-select"
                 value={field.type}
@@ -134,28 +151,10 @@ function ResourceCard({ resource, index, onChange, onDelete }) {
                 <span className="cm-resource-num">#{index + 1}</span>
                 <input
                     className="cm-resource-name-input"
-                    placeholder="resourceName"
+                    placeholder="resourceName  (e.g. students, orders)"
                     value={resource.name}
                     onChange={e => onChange({ ...resource, name: e.target.value })}
                 />
-                <Checkbox
-                    checked={resource.inferFields}
-                    onChange={v => onChange({ ...resource, inferFields: v, fields: v ? [] : resource.fields })}
-                    label="Infer fields"
-                />
-                {resource.inferFields && (
-                    <label className="cm-count-label">
-                        Count
-                        <input
-                            className="cm-count-input"
-                            type="number"
-                            min={1}
-                            max={50}
-                            value={resource.count}
-                            onChange={e => onChange({ ...resource, count: Math.max(1, Math.min(50, Number(e.target.value))) })}
-                        />
-                    </label>
-                )}
                 <div className="cm-auth-wrap">
                     <span className="cm-auth-label">Auth</span>
                     <Toggle
@@ -171,34 +170,42 @@ function ResourceCard({ resource, index, onChange, onDelete }) {
                 )}
             </div>
 
-            {resource.inferFields ? (
-                <div className="cm-infer-banner">
-                    <BrainIcon />
-                    <span>AI will auto-generate fields, types and foreign-key connections for <strong>{resource.name || 'this resource'}</strong></span>
-                </div>
-            ) : (
-                <div className="cm-fields-section">
-                    {resource.fields.length > 0 && (
-                        <div className="cm-field-header-row">
-                            <span>Field name</span>
-                            <span>Type</span>
-                            <span>Req</span>
-                            <span />
-                        </div>
-                    )}
-                    {resource.fields.map((f, fi) => (
-                        <FieldRow
-                            key={f.id}
-                            field={f}
-                            onChange={updated => updateField(fi, updated)}
-                            onDelete={() => deleteField(fi)}
-                        />
-                    ))}
-                    <button className="cm-add-field-btn" onClick={addField}>
-                        <PlusIcon /> Add Field
-                    </button>
-                </div>
-            )}
+            <div className="cm-fields-section">
+                {resource.fields.length > 0 && (
+                    <div className="cm-field-header-row">
+                        <span>Field name</span>
+                        <span>Type</span>
+                        <span>Req</span>
+                        <span />
+                    </div>
+                )}
+                {resource.fields.map((f, fi) => (
+                    <FieldRow
+                        key={f.id}
+                        field={f}
+                        onChange={updated => updateField(fi, updated)}
+                        onDelete={() => deleteField(fi)}
+                    />
+                ))}
+                <button className="cm-add-field-btn" onClick={addField}>
+                    <PlusIcon /> Add Field
+                </button>
+            </div>
+        </div>
+    )
+}
+
+// ── AI-added fields callout (shown after creation) ─────────────────────────
+function AiAddedCallout({ resourceName, fields }) {
+    if (!fields || fields.length === 0) return null
+    return (
+        <div className="cm-ai-added-callout">
+            <SparkIcon />
+            <span>
+                <strong>{resourceName}</strong> — AI added: {fields.map(f => (
+                    <code key={f} className="cm-ai-added-field">{f}</code>
+                ))}
+            </span>
         </div>
     )
 }
@@ -207,8 +214,6 @@ const newResource = () => ({
     id: Date.now() + Math.random(),
     name: '',
     auth: false,
-    inferFields: false,
-    count: 5,
     fields: [{ id: Date.now(), name: '', type: 'String', required: false }],
 })
 
@@ -218,9 +223,10 @@ export default function CreationMode({ onSubmit, loading }) {
     const [resources, setResources] = useState([newResource()])
     const [systemName, setSystemName] = useState('')
     const [error, setError] = useState(null)
+    const [aiAddedResult, setAiAddedResult] = useState([]) // [{resource, aiAddedFields}]
 
-    const resetCustom = () => setResources([newResource()])
-    const resetInfer = () => setSystemName('')
+    const resetCustom = () => { setResources([newResource()]); setAiAddedResult([]) }
+    const resetInfer = () => { setSystemName(''); setAiAddedResult([]) }
 
     const updateResource = useCallback((index, updated) => {
         setResources(prev => prev.map((r, i) => i === index ? updated : r))
@@ -232,20 +238,36 @@ export default function CreationMode({ onSubmit, loading }) {
 
     const addResource = () => setResources(prev => [...prev, newResource()])
 
+    // Check if any field has the forbidden "id" name
+    const hasIdField = resources.some(r =>
+        r.fields.some(f => f.name.trim().toLowerCase() === 'id')
+    )
+
     const handleSubmit = async () => {
+        setAiAddedResult([])
+
         const payload = tab === 'custom'
             ? {
                 mode: 'custom',
-                resources: resources.map(r =>
-                    r.inferFields
-                        ? { name: r.name, auth: r.auth, inferFields: true, count: r.count }
-                        : { name: r.name, auth: r.auth, fields: r.fields.map(f => ({ name: f.name, type: f.type, required: f.required })) }
-                ),
+                resources: resources.map(r => ({
+                    name: r.name,
+                    auth: r.auth,
+                    fields: r.fields
+                        .filter(f => f.name.trim() && f.name.trim().toLowerCase() !== 'id')
+                        .map(f => ({ name: f.name, type: f.type, required: f.required }))
+                })),
             }
             : { mode: 'infer', systemName: systemName.trim() }
 
         try {
-            await onSubmit(payload)
+            const result = await onSubmit(payload)
+            // onSubmit should return the created resources so we can surface AI-added fields
+            if (result && Array.isArray(result)) {
+                const added = result
+                    .filter(r => r.aiAddedFields && r.aiAddedFields.length > 0)
+                    .map(r => ({ resource: r.name, aiAddedFields: r.aiAddedFields }))
+                setAiAddedResult(added)
+            }
             if (tab === 'custom') resetCustom()
             else resetInfer()
         } catch (err) {
@@ -253,15 +275,28 @@ export default function CreationMode({ onSubmit, loading }) {
         }
     }
 
-    const canSubmitCustom = resources.length > 0 && resources.every(r => r.name.trim())
+    const canSubmitCustom = resources.length > 0 &&
+        resources.every(r => r.name.trim()) &&
+        !hasIdField
+
     const canSubmitInfer = systemName.trim().length > 0
-    const inferCount = resources.filter(r => r.inferFields).length
-    const manualCount = resources.filter(r => !r.inferFields).length
 
     return (
         <div className="cm-root">
             {error && <ErrorDialog message={error} onClose={() => setError(null)} />}
             {loading && <LoadingOverlay />}
+
+            {/* AI-added fields notification */}
+            {aiAddedResult.length > 0 && (
+                <div className="cm-ai-added-banner">
+                    <div className="cm-ai-added-banner-title">
+                        <SparkIcon /> AI completed missing relationships
+                    </div>
+                    {aiAddedResult.map(r => (
+                        <AiAddedCallout key={r.resource} resourceName={r.resource} fields={r.aiAddedFields} />
+                    ))}
+                </div>
+            )}
 
             {/* Tabs */}
             <div className="cm-tabs">
@@ -276,6 +311,16 @@ export default function CreationMode({ onSubmit, loading }) {
             {/* Custom tab */}
             {tab === 'custom' && (
                 <div className="cm-body">
+                    {/* MongoDB ID info banner */}
+                    <div className="cm-id-info-banner">
+                        <InfoIcon />
+                        <span>
+                            MongoDB auto-creates an <code>_id</code> for every record (returned as <code>id</code>).
+                            Do not add an <code>id</code> field. For foreign keys use compound names like <code>studentId</code> or <code>courseId</code>.
+                            The AI will detect missing relational joins and add them automatically.
+                        </span>
+                    </div>
+
                     {resources.map((r, i) => (
                         <ResourceCard
                             key={r.id}
@@ -290,8 +335,10 @@ export default function CreationMode({ onSubmit, loading }) {
                     </button>
                     <div className="cm-footer">
                         <span className="cm-footer-stats">
-                            {resources.length} Resource{resources.length !== 1 ? 's' : ''} &nbsp;·&nbsp;
-                            {manualCount} Manual &nbsp;·&nbsp; {inferCount} Inferred
+                            {resources.length} Resource{resources.length !== 1 ? 's' : ''}
+                            {hasIdField && (
+                                <span className="cm-footer-id-warn"> · ⚠ Remove forbidden "id" field</span>
+                            )}
                         </span>
                         <button className="btn btn-teal cm-submit-btn" onClick={handleSubmit} disabled={loading || !canSubmitCustom}>
                             Create Mock Resources
@@ -304,7 +351,7 @@ export default function CreationMode({ onSubmit, loading }) {
             {tab === 'infer' && (
                 <div className="cm-body">
                     <div className="cm-infer-section">
-                        <label className="cm-infer-section-label">System Name</label>
+                        <label className="cm-infer-section-label">Describe your system</label>
                         <input
                             className="cm-system-input"
                             placeholder="e.g. student management system, hospital records, e-commerce platform…"
@@ -313,7 +360,11 @@ export default function CreationMode({ onSubmit, loading }) {
                             disabled={loading}
                         />
                         <p className="cm-infer-hint">
-                            The AI will verify the system, infer all entities, fields, types, and relational foreign keys automatically.
+                            The AI will verify this is a recognisable software system, then infer all entities, fields,
+                            datatypes, required flags, and relational foreign keys. MongoDB automatically generates an <code>_id</code> for
+                            every record (exposed as <code>id</code>) — foreign-key fields in child resources
+                            (e.g. <code>studentId</code> in <code>enrollments</code>) reference that <code>_id</code>.
+                            You do not need to add an <code>id</code> field manually.
                         </p>
                     </div>
                     <div className="cm-footer">
