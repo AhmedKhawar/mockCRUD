@@ -279,6 +279,7 @@ export default function CreationMode({ onSubmit, loading }) {
 
     const canSubmitCustom = resources.length > 0 &&
         resources.every(r => r.name.trim()) &&
+        resources.every(r => r.fields.some(f => f.name.trim().length > 0)) &&
         !hasIdField
 
     const canSubmitInfer = systemName.trim().length > 0
