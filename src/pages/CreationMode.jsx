@@ -111,7 +111,9 @@ function FieldRow({ field, onChange, onDelete }) {
                     <div className="cm-id-tooltip">
                         <InfoIcon />
                         <span className="cm-id-tooltip-text">
-                            MongoDB auto-creates <code>_id</code> for every record (returned as <code>id</code> to clients). For foreign keys use compound names like <code>studentId</code> or <code>userId</code>.
+                            <strong>Do not use "id".</strong> MongoDB auto-creates an <code>_id</code> for every record (exposed as <code>id</code>).
+                            You don't need a specific <code>id</code> field for a resource to be referenced. For example, a student doesn't need an `id` to be referenced by `enrollments`—the generated <code>id</code> is used automatically.
+                            Just use compound names for Foreign Keys (e.g., <code>studentId</code>).
                         </span>
                     </div>
                 )}
@@ -315,9 +317,9 @@ export default function CreationMode({ onSubmit, loading }) {
                     <div className="cm-id-info-banner">
                         <InfoIcon />
                         <span>
-                            MongoDB auto-creates an <code>_id</code> for every record (returned as <code>id</code>).
-                            Do not add an <code>id</code> field. For foreign keys use compound names like <code>studentId</code> or <code>courseId</code>.
-                            The AI will detect missing relational joins and add them automatically.
+                            <strong>How Auto-Generated IDs work:</strong> MongoDB automatically generates an <code>_id</code> for every record (returned in API responses as <code>id</code>).<br />
+                            Because of this, <strong>you do not need to add your own <code>id</code> field</strong>. For instance, a <code>students</code> resource doesn't need an `id` field to be referenced by an `enrollments` resource—the auto-generated <code>id</code> serves perfectly as the Foreign Key target.<br />
+                            When defining Foreign Keys in child resources, simply use compound names like <code>studentId</code> or <code>courseId</code>. The AI will intelligently detect missing relational joins across your resources and inject them automatically!
                         </span>
                     </div>
 

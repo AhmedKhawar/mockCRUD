@@ -245,11 +245,15 @@ function ResourceCard({ resource, index, onDelete, onToggleAuth }) {
                             {ep.description && <p className="endpoint-desc">{ep.description}</p>}
                             {ep.properties?.length > 0 && (
                                 <div className="endpoint-fields">
-                                    {ep.properties.map(p => (
-                                        <span key={p.fieldName} className="field-pill">
-                                            {p.fieldName}<span className="field-type"> {p.fieldType}</span>
-                                        </span>
-                                    ))}
+                                    {ep.properties.map(p => {
+                                        const isAi = resource.aiAddedFields?.includes(p.fieldName)
+                                        return (
+                                            <span key={p.fieldName} className={`field-pill ${isAi ? 'field-pill-ai' : ''}`} title={isAi ? "Field intelligently injected by AI as Foreign Key" : ""}>
+                                                {isAi && <span className="ai-spark"><SparkleIcon /></span>}
+                                                {p.fieldName}<span className="field-type"> {p.fieldType}</span>
+                                            </span>
+                                        )
+                                    })}
                                 </div>
                             )}
                             {ep.requiredFields?.length > 0 && (

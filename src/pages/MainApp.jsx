@@ -7,6 +7,12 @@ import './MainApp.css'
 
 const API = 'https://mock-crud-backend.vercel.app'
 
+const SparkleIcon = () => (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+    </svg>
+)
+
 function MethodBadge({ method }) {
     const colors = {
         GET: 'badge-get',
@@ -38,12 +44,16 @@ function EndpointRow({ endpoint, baseUrl }) {
             )}
             {endpoint.properties?.length > 0 && (
                 <div className="endpoint-fields">
-                    {endpoint.properties.map((p) => (
-                        <span key={p.fieldName} className="field-pill">
-                            <span className="field-name">{p.fieldName}</span>
-                            <span className="field-type">{p.fieldType}</span>
-                        </span>
-                    ))}
+                    {endpoint.properties.map((p) => {
+                        const isAi = p.aiAdded === true || endpoint.aiAddedFields?.includes(p.fieldName);
+                        return (
+                            <span key={p.fieldName} className={`field-pill ${isAi ? 'field-pill-ai' : ''}`} title={isAi ? "Field intelligently injected by AI as Foreign Key" : ""}>
+                                {isAi && <span className="ai-spark"><SparkleIcon /></span>}
+                                <span className="field-name">{p.fieldName}</span>
+                                <span className="field-type">{p.fieldType}</span>
+                            </span>
+                        )
+                    })}
                 </div>
             )}
         </div>
