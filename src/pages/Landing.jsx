@@ -50,9 +50,7 @@ export default function Landing() {
                                 <div className="flow-how-content">
                                     <h3>Define your models</h3>
                                     <p>
-                                        Use the <strong>Manual Builder</strong> to hand-craft resource fields.
-                                        <em>(Pro tip: Don't specify an <code>id</code> field — MongoDB's <code>_id</code> is exposed as <code>id</code> inherently, which acts implicitly as your Foreign Key target!)</em>
-                                        Alternatively, just type a system name like <em>"Inventory App"</em>.
+                                        Use the <strong>Manual Builder</strong> to hand-craft specific resources exactly to your spec, or simply provide an overarching system name like <em>"Inventory App"</em> and allow the AI engine to infer everything for you.
                                     </p>
                                     <div className="flow-how-modes">
                                         <span className="flow-how-mode-chip">✏️ Manual Builder</span>
@@ -68,7 +66,7 @@ export default function Landing() {
                                 <div className="flow-how-content">
                                     <h3>AI detects relationships</h3>
                                     <p>
-                                        The AI automatically identifies missing dependencies. It explicitly maps parent and child foreign keys (e.g. attaching <code>studentId</code> internally) and constructs a complete CRUD REST spec across all data boundaries!
+                                        The AI automatically identifies missing structural dependencies between your entities. It implicitly maps Foreign Keys (e.g., providing <code>studentId</code> to an enrollments table) and constructs a fully connected CRUD REST API!
                                     </p>
                                     <div className="flow-how-ep-row-mini">
                                         {['GET', 'POST', 'PUT', 'DELETE'].map(m => (

@@ -25,11 +25,11 @@ export const DOC_ENDPOINTS = [
 ]
 
 export const PROMPT_TIPS = [
-    { icon: '🎯', label: 'Name it', example: '"create a product"', note: 'Fields are auto-inferred.' },
-    { icon: '📋', label: 'List fields', example: '"user with name, email, age"', note: 'Exactly those fields are used.' },
-    { icon: '🔢', label: 'Set a count', example: '"course with 5 fields"', note: 'LLM picks the best 5.' },
-    { icon: '🔗', label: 'System prompt', example: '"student management system"', note: 'Multiple linked resources with foreign keys are inferred.' },
-    { icon: '🚫', label: 'Avoid', example: '"how are you" / "president"', note: 'Off-topic or vague single words are rejected.' },
+    { icon: '🤖', label: 'AI System Inference', example: '"hospital management system"', note: 'The AI will infer full multi-table schemas and datatypes for you.' },
+    { icon: '✏️', label: 'Manual Builder', example: 'Add resources directly', note: 'Define your resources manually. The AI will strictly honor your fields.' },
+    { icon: '🔑', label: 'No ID needed', example: 'MongoDB auto-generates _id', note: 'MongoDB automatically generates an `_id` for every record (exposed as `id`). You never need to supply an "id" property.' },
+    { icon: '🔗', label: 'Foreign Keys', example: 'studentId, courseId', note: 'Like a student doesn\'t need a specific ID to get referenced in enrollments. Their auto-generated "id" acts as the target for the Foreign Key. Just ask for "studentId".' },
+    { icon: '🚫', label: 'Avoid', example: '"how are you" / random words', note: 'Non-software domain phrases are rejected.' },
 ]
 
 // ── Close Icon ────────────────────────────────────────────────────────────────
