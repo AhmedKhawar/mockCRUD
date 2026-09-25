@@ -25,11 +25,10 @@ export const DOC_ENDPOINTS = [
 ]
 
 export const PROMPT_TIPS = [
-    { icon: '🤖', label: 'AI System Inference', example: '"hospital management system"', note: 'The AI will infer full multi-table schemas and datatypes for you.' },
-    { icon: '✏️', label: 'Manual Builder', example: 'Add resources directly', note: 'Define your resources manually. The AI will strictly honor your fields.' },
-    { icon: '🔑', label: 'No ID needed', example: 'MongoDB auto-generates _id', note: 'MongoDB automatically generates an `_id` for every record (exposed as `id`). You never need to supply an "id" property.' },
-    { icon: '🔗', label: 'Foreign Keys', example: 'studentId, courseId', note: 'Like a student doesn\'t need a specific ID to get referenced in enrollments. Their auto-generated "id" acts as the target for the Foreign Key. Just ask for "studentId".' },
-    { icon: '🚫', label: 'Avoid', example: '"how are you" / random words', note: 'Non-software domain phrases are rejected.' },
+    { icon: '🪄', label: 'Infer Fields', example: 'Let AI do the work', note: 'Enable "Infer fields" on any resource to have AI instantly generate up to 8 relevant fields based on the resource name.' },
+    { icon: '🔗', label: 'Smart Relational Links', example: 'link: true', note: 'Toggle "Link" to have the AI intelligently group related resources (e.g. users and orders) and automatically inject Foreign Keys. Unrelated tables act independently.' },
+    { icon: '🔒', label: 'Auth Protection', example: 'Require JWT', note: 'Enable Auth to enforce JWT bearer token validation on all generated endpoints for that specific resource.' },
+    { icon: '🔑', label: 'No ID needed', example: 'MongoDB auto-generates _id', note: 'MongoDB effortlessly generates an `_id` for every record (exposed as `id`). You never need to supply an "id" property explicitly.' },
 ]
 
 // ── Close Icon ────────────────────────────────────────────────────────────────

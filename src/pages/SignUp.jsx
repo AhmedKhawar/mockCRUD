@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar'
 import './AuthForm.css'
 import { GoogleLogin } from '@react-oauth/google'
 
-const API = 'https://mock-crud-backend.vercel.app'
+const API = window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://mock-crud-backend.vercel.app'
 
 export default function SignUp() {
     const navigate = useNavigate()

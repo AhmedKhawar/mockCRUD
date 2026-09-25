@@ -1,528 +1,624 @@
-/* ────────────────────────────────────────────────────────────────────────
-   CreationMode.css — uses only tokens defined in index.css
-   ──────────────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────
+   CreationMode — Premium Redesign
+   Contrast-safe for both light and dark themes.
+───────────────────────────────────────────────────────────── */
 
-/* ── Root ───────────────────────────────────────────────────────────────── */
-.cm-root {
+/* ── Root shell ─────────────────────────────────────────────── */
+.cme-root {
     position: relative;
     display: flex;
     flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
     overflow: hidden;
 }
 
-/* ── Tabs ───────────────────────────────────────────────────────────────── */
-.cm-tabs {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-subtle);
-}
-
-.cm-tab {
-    flex: 1;
-    padding: 0.8rem 1rem;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--text-3);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    cursor: pointer;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
-}
-
-.cm-tab:hover:not(:disabled) {
-    color: var(--text);
-    background: var(--bg-card);
-}
-
-.cm-tab-active {
-    color: var(--teal) !important;
-    border-bottom-color: var(--teal) !important;
-    background: var(--bg-card) !important;
-}
-
-.cm-tab:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-}
-
-/* ── Body ───────────────────────────────────────────────────────────────── */
-.cm-body {
+/* ── Body ───────────────────────────────────────────────────── */
+.cme-body {
     padding: 1.1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 1rem;
 }
 
-/* ── Resource Card ──────────────────────────────────────────────────────── */
-.cm-resource-card {
-    background: var(--bg);
-    border: 1px solid var(--border);
+/* ════════════════════════════════════════════════════════════
+   RESOURCE BLOCK
+════════════════════════════════════════════════════════════ */
+.cme-block {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--border);
     border-radius: var(--radius);
+    background: var(--bg);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow);
 }
 
-.cm-resource-header {
+.cme-block:focus-within {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal) 14%, transparent);
+}
+
+.cme-block--err {
+    border-color: var(--danger) !important;
+}
+
+/* ── Block header ───────────────────────────────────────────── */
+.cme-block-head {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.65rem 0.85rem;
-    border-bottom: 1px solid var(--border);
+    padding: 0.7rem 0.9rem;
     background: var(--bg-subtle);
-    flex-wrap: wrap;
-    border-radius: var(--radius) var(--radius) 0 0;
+    border-bottom: 2px solid var(--border);
+    border-radius: calc(var(--radius) - 2px) calc(var(--radius) - 2px) 0 0;
 }
 
-.cm-resource-num {
+.cme-block-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    background: var(--teal);
+    color: var(--teal-fg);
+    border-radius: 50%;
     font-size: 0.65rem;
     font-weight: 800;
-    letter-spacing: 0.07em;
-    color: var(--teal);
-    flex-shrink: 0;
+    letter-spacing: 0;
 }
 
-.cm-resource-name-input {
+.cme-name-input {
     flex: 1;
-    min-width: 90px;
+    min-width: 0;
+    height: 36px;
     background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.28rem 0.5rem;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    padding: 0 0.7rem;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
+    font-size: 0.83rem;
+    font-weight: 500;
     color: var(--text);
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.cm-resource-name-input:focus {
+.cme-name-input:focus {
     outline: none;
     border-color: var(--teal);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal) 15%, transparent);
 }
 
-.cm-resource-name-input::placeholder {
+.cme-name-input::placeholder {
     color: var(--text-3);
+    font-style: italic;
+    font-weight: 400;
 }
 
-.cm-auth-wrap {
+.cme-block-controls {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
-    margin-left: auto;
-}
-
-.cm-auth-label {
-    font-size: 0.7rem;
-    color: var(--text-2);
-    white-space: nowrap;
-}
-
-.cm-resource-del {
-    background: transparent;
-    border: none;
-    color: var(--text-3);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.25rem;
-    border-radius: 4px;
-    transition: color 0.15s;
+    gap: 0.45rem;
     flex-shrink: 0;
 }
 
-.cm-resource-del:hover {
-    color: #fb7185;
-}
-
-/* ── Custom checkbox ────────────────────────────────────────────────────── */
-.cm-checkbox-label {
+/* Auth & Link Tags */
+.cme-auth-tag,
+.cme-link-tag {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.28rem;
+    padding: 0.25rem 0.55rem 0.25rem 0.45rem;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-2);
+    background: var(--bg-card);
     cursor: pointer;
     user-select: none;
+    transition: all 0.18s;
+    white-space: nowrap;
 }
 
-.cm-checkbox-native {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-    pointer-events: none;
+.cme-auth-tag--on,
+.cme-link-tag--on {
+    border-color: var(--teal);
+    color: var(--teal);
+    background: color-mix(in srgb, var(--teal) 10%, var(--bg-card));
 }
 
-.cm-checkbox-box {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    background: var(--bg-card);
-    display: inline-flex;
+/* Delete block */
+.cme-del-block {
+    display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.15s, border-color 0.15s;
-}
-
-.cm-checkbox-label:has(.cm-checkbox-native:checked) .cm-checkbox-box {
-    background: var(--teal);
-    border-color: var(--teal);
-}
-
-.cm-checkbox-text {
-    font-size: 0.72rem;
-    color: var(--text-2);
-    white-space: nowrap;
-}
-
-/* ── Count input ────────────────────────────────────────────────────────── */
-.cm-count-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.7rem;
-    color: var(--text-2);
-    white-space: nowrap;
-}
-
-.cm-count-input {
-    width: 48px;
+    width: 30px;
+    height: 30px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
     background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 0.22rem 0.4rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--text);
-    text-align: center;
+    color: var(--text-3);
+    cursor: pointer;
+    transition: all 0.18s;
+    flex-shrink: 0;
 }
 
-.cm-count-input:focus {
-    outline: none;
-    border-color: var(--teal);
+.cme-del-block:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: color-mix(in srgb, var(--danger) 8%, var(--bg-card));
 }
 
-/* ── Toggle switch ──────────────────────────────────────────────────────── */
-.cm-toggle {
+/* ── Toggle ─────────────────────────────────────────────────── */
+.cme-toggle {
     display: inline-flex;
     align-items: center;
     cursor: pointer;
     position: relative;
 }
 
-.cm-toggle input[type="checkbox"] {
+.cme-toggle input[type="checkbox"] {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.cm-toggle-track {
-    position: relative;
+.cme-track {
     display: block;
-    width: 32px;
-    height: 17px;
-    border-radius: 999px;
+    width: 30px;
+    height: 16px;
+    border-radius: 99px;
     background: var(--border);
+    position: relative;
     transition: background 0.2s;
-    flex-shrink: 0;
 }
 
-.cm-toggle input[type="checkbox"]:checked+.cm-toggle-track {
+.cme-toggle input:checked+.cme-track {
     background: var(--teal);
 }
 
-.cm-toggle-thumb {
+.cme-thumb {
     position: absolute;
     top: 2px;
     left: 2px;
-    width: 13px;
-    height: 13px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     transition: transform 0.2s;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
-.cm-toggle input[type="checkbox"]:checked+.cm-toggle-track .cm-toggle-thumb {
-    transform: translateX(15px);
+.cme-toggle input:checked+.cme-track .cme-thumb {
+    transform: translateX(14px);
 }
 
-/* ── Infer banner ───────────────────────────────────────────────────────── */
-.cm-infer-banner {
+/* ════════════════════════════════════════════════════════════
+   INFER STRIP
+════════════════════════════════════════════════════════════ */
+.cme-infer-strip {
     display: flex;
-    align-items: flex-start;
-    gap: 0.55rem;
-    padding: 0.65rem 0.85rem;
-    font-size: 0.75rem;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 0.9rem;
+    background: var(--bg-subtle);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    min-height: 44px;
+}
+
+.cme-infer-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.28rem 0.7rem 0.28rem 0.55rem;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: var(--bg-card);
+    font-size: 0.72rem;
+    font-weight: 700;
     color: var(--text-2);
-    line-height: 1.55;
-    border-top: 1px solid var(--border);
-    background: var(--bg);
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
 }
 
-.cm-infer-banner svg {
-    color: var(--teal);
-    flex-shrink: 0;
-    margin-top: 1px;
-}
-
-.cm-infer-banner strong {
+.cme-infer-toggle:hover {
+    border-color: var(--teal);
     color: var(--teal);
 }
 
-/* ── Fields section ─────────────────────────────────────────────────────── */
-.cm-fields-section {
-    padding: 0.75rem 0.85rem;
+.cme-infer-toggle--on {
+    border-color: var(--teal);
+    color: var(--teal);
+    background: color-mix(in srgb, var(--teal) 10%, var(--bg-card));
+}
+
+.cme-infer-count {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    animation: cme-pop 0.14s cubic-bezier(.34, 1.4, .64, 1) both;
+}
+
+@keyframes cme-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.cme-count-input {
+    width: 54px;
+    height: 32px;
+    text-align: center;
+    background: var(--bg-card);
+    border: 2px solid var(--teal);
+    border-radius: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--teal);
+    transition: box-shadow 0.15s;
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.cme-count-input::-webkit-inner-spin-button,
+.cme-count-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.cme-count-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal) 22%, transparent);
+}
+
+.cme-count-unit {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-2);
+}
+
+.cme-count-range {
+    font-size: 0.65rem;
+    color: var(--text-3);
+    font-style: italic;
+    white-space: nowrap;
+}
+
+.cme-infer-note {
+    font-size: 0.7rem;
+    color: var(--text-3);
+    font-style: italic;
+}
+
+.cme-infer-note strong {
+    color: var(--teal);
+    font-style: normal;
+}
+
+/* ════════════════════════════════════════════════════════════
+   FIELDS SECTION
+════════════════════════════════════════════════════════════ */
+.cme-fields {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    padding: 0.65rem 0.9rem 0.8rem;
+    gap: 0.3rem;
 }
 
-.cm-field-header-row {
+.cme-fields-header {
     display: grid;
-    grid-template-columns: 1fr 100px 42px 28px;
+    grid-template-columns: 1fr 110px 40px 32px;
     gap: 0.4rem;
-    padding: 0 0 0.25rem;
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    color: var(--text-3);
+    padding: 0 0 0.4rem;
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    color: var(--text-3);
     border-bottom: 1px solid var(--border);
 }
 
-.cm-field-row {
+/* field row */
+.cme-field-row {
     display: grid;
-    grid-template-columns: 1fr 100px 42px 28px;
+    grid-template-columns: 1fr 110px 40px 32px;
     gap: 0.4rem;
-    align-items: center;
+    align-items: start;
+    padding: 0.2rem 0;
 }
 
-.cm-field-input {
+.cme-field-name-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.cme-field-input {
+    height: 32px;
     width: 100%;
     background: var(--bg-subtle);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 0.26rem 0.45rem;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 0 0.5rem;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.76rem;
+    font-size: 0.78rem;
     color: var(--text);
     transition: border-color 0.15s;
 }
 
-.cm-field-input:focus {
+.cme-field-row--bad .cme-field-input {
+    border-color: var(--danger);
+    background: color-mix(in srgb, var(--danger) 8%, var(--bg-subtle));
+    color: var(--danger);
+}
+
+.cme-field-input:focus {
     outline: none;
     border-color: var(--teal);
 }
 
-.cm-field-input::placeholder {
+.cme-field-input::placeholder {
     color: var(--text-3);
 }
 
-.cm-field-select {
+.cme-id-badge {
+    font-size: 0.62rem;
+    color: var(--danger);
+    font-weight: 600;
+    padding: 0 0.2rem;
+    animation: cme-pop 0.12s ease both;
+}
+
+.cme-select-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.cme-select-chevron {
+    position: absolute;
+    right: 7px;
+    pointer-events: none;
+    color: var(--text-3);
+    flex-shrink: 0;
+}
+
+.cme-field-select {
+    height: 32px;
     width: 100%;
     appearance: none;
+    -webkit-appearance: none;
     background: var(--bg-subtle);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 0.26rem 0.45rem;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 0 1.4rem 0 0.5rem;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.76rem;
+    font-size: 0.75rem;
     color: var(--text);
     cursor: pointer;
     transition: border-color 0.15s;
 }
 
-.cm-field-select:focus {
+.cme-field-select:focus {
     outline: none;
     border-color: var(--teal);
 }
 
-.cm-field-req-cell {
+/* Checkbox */
+.cme-cb {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 32px;
+    cursor: pointer;
 }
 
-.cm-field-del {
+.cme-cb input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+}
+
+.cme-cb-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+}
+
+.cme-cb:has(input:checked) .cme-cb-box {
+    background: var(--teal);
+    border-color: var(--teal);
+}
+
+/* Delete field btn */
+.cme-del-field {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
     background: transparent;
     border: none;
     color: var(--text-3);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.2rem;
-    border-radius: 4px;
-    transition: color 0.15s;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
 }
 
-.cm-field-del:hover {
-    color: #fb7185;
+.cme-del-field:hover:not(:disabled) {
+    color: var(--danger);
+    background: color-mix(in srgb, var(--danger) 9%, transparent);
 }
 
-.cm-add-field-btn {
+.cme-del-field:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
+
+.cme-add-field {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    margin-top: 0.15rem;
+    margin-top: 0.3rem;
+    align-self: flex-start;
     background: transparent;
-    border: 1px dashed var(--border);
-    border-radius: 5px;
-    padding: 0.3rem 0.6rem;
-    font-size: 0.7rem;
+    border: 1.5px dashed var(--border);
+    border-radius: 7px;
+    padding: 0.3rem 0.65rem;
+    font-size: 0.72rem;
+    font-weight: 600;
     color: var(--text-3);
     cursor: pointer;
     transition: color 0.15s, border-color 0.15s;
-    align-self: flex-start;
 }
 
-.cm-add-field-btn:hover {
+.cme-add-field:hover {
     color: var(--teal);
     border-color: var(--teal);
 }
 
-/* ── Add resource ───────────────────────────────────────────────────────── */
-.cm-add-resource-btn {
+.cme-fields-cap {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0.3rem;
+    align-self: flex-start;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-3);
+    padding: 0.3rem 0.65rem;
+    border: 1.5px dashed var(--border);
+    border-radius: 7px;
+    background: var(--bg-subtle);
+}
+
+/* ════════════════════════════════════════════════════════════
+   FOOTER ROW
+════════════════════════════════════════════════════════════ */
+.cme-add-block {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    background: transparent;
-    border: 1px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 0.55rem 0.9rem;
-    font-size: 0.76rem;
-    color: var(--text-3);
-    cursor: pointer;
-    transition: color 0.15s, border-color 0.15s;
     align-self: flex-start;
+    background: transparent;
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 0.48rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: color 0.18s, border-color 0.18s, background 0.18s;
 }
 
-.cm-add-resource-btn:hover:not(:disabled) {
+.cme-add-block:hover:not(:disabled) {
     color: var(--teal);
     border-color: var(--teal);
+    background: color-mix(in srgb, var(--teal) 5%, transparent);
 }
 
-.cm-add-resource-btn:disabled {
+.cme-add-block:disabled {
     opacity: 0.4;
     cursor: not-allowed;
 }
 
-/* ── Footer ─────────────────────────────────────────────────────────────── */
-.cm-footer {
+.cme-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 0.5rem;
+    padding-top: 0.6rem;
     border-top: 1px solid var(--border);
     flex-wrap: wrap;
-    gap: 0.65rem;
+    gap: 0.6rem;
 }
 
-.cm-footer-stats {
-    font-size: 0.7rem;
-    color: var(--text-3);
-}
-
-.cm-submit-btn {
-    min-width: 170px;
-}
-
-/* ── Infer system tab ───────────────────────────────────────────────────── */
-.cm-infer-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.cm-infer-section-label {
-    font-size: 0.67rem;
-    font-weight: 700;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--text-3);
-}
-
-.cm-system-input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 0.6rem 0.85rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.88rem;
-    color: var(--text);
-    transition: border-color 0.15s;
-}
-
-.cm-system-input:focus {
-    outline: none;
-    border-color: var(--teal);
-}
-
-.cm-system-input::placeholder {
-    color: var(--text-3);
-}
-
-.cm-infer-hint {
+.cme-footer-count {
     font-size: 0.72rem;
     color: var(--text-3);
-    line-height: 1.55;
+    font-weight: 500;
 }
 
-/* ── Loading overlay ────────────────────────────────────────────────────── */
-.cm-loading-overlay {
+.cme-footer-err {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+.cme-submit {
+    min-width: 155px;
+    font-size: 0.85rem !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   LOADING OVERLAY
+════════════════════════════════════════════════════════════ */
+.cme-loading {
     position: absolute;
     inset: 0;
-    background: color-mix(in srgb, var(--bg-card) 80%, transparent);
-    backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    border-radius: inherit;
-}
-
-.cm-loading-inner {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.7rem;
+    justify-content: center;
+    gap: 0.75rem;
+    background: color-mix(in srgb, var(--bg-card) 82%, transparent);
+    backdrop-filter: blur(5px);
+    z-index: 20;
+    border-radius: inherit;
+    font-size: 0.8rem;
+    color: var(--text-2);
 }
 
-.cm-loading-dots {
+.cme-loading-dots {
     display: flex;
     gap: 0.45rem;
 }
 
-.cm-loading-dots span {
+.cme-loading-dots span {
     width: 9px;
     height: 9px;
     border-radius: 50%;
     background: var(--teal);
-    animation: cm-bounce 1s ease-in-out infinite;
+    animation: cme-bounce 1.1s ease-in-out infinite;
 }
 
-.cm-loading-dots span:nth-child(2) {
-    animation-delay: 0.16s;
+.cme-loading-dots span:nth-child(2) {
+    animation-delay: 0.17s;
 }
 
-.cm-loading-dots span:nth-child(3) {
-    animation-delay: 0.32s;
+.cme-loading-dots span:nth-child(3) {
+    animation-delay: 0.34s;
 }
 
-@keyframes cm-bounce {
+@keyframes cme-bounce {
 
     0%,
     80%,
     100% {
-        transform: scale(0.45);
-        opacity: 0.35;
+        transform: scale(0.4);
+        opacity: 0.3;
     }
 
     40% {
@@ -531,13 +627,10 @@
     }
 }
 
-.cm-loading-text {
-    font-size: 0.78rem;
-    color: var(--text-2);
-}
-
-/* ── Error Dialog — rendered via React portal on document.body ────────── */
-.cm-dialog-backdrop {
+/* ════════════════════════════════════════════════════════════
+   ERROR DIALOG
+════════════════════════════════════════════════════════════ */
+.cme-backdrop {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
@@ -546,10 +639,10 @@
     justify-content: center;
     z-index: 9999;
     padding: 1rem;
-    animation: cm-fade 0.15s ease;
+    animation: cme-fade 0.14s ease;
 }
 
-@keyframes cm-fade {
+@keyframes cme-fade {
     from {
         opacity: 0;
     }
@@ -559,20 +652,20 @@
     }
 }
 
-.cm-dialog {
+.cme-dialog {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     width: 100%;
-    max-width: 400px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border);
-    animation: cm-up 0.17s ease;
+    max-width: 390px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+    animation: cme-up 0.18s cubic-bezier(.34, 1.4, .64, 1) both;
     overflow: hidden;
 }
 
-@keyframes cm-up {
+@keyframes cme-up {
     from {
-        transform: translateY(10px);
+        transform: translateY(12px);
         opacity: 0;
     }
 
@@ -582,228 +675,119 @@
     }
 }
 
-.cm-dialog-header {
+.cme-dialog-header {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
-    padding: 1rem 1.1rem 0.8rem;
+    gap: 0.6rem;
+    padding: 0.9rem 1rem;
     border-bottom: 1px solid var(--border);
-}
-
-.cm-dialog-icon-wrap {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: rgba(251, 113, 133, 0.12);
-    border: 1px solid rgba(251, 113, 133, 0.25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fb7185;
-    flex-shrink: 0;
-}
-
-.cm-dialog-title {
-    flex: 1;
     font-size: 0.88rem;
     font-weight: 700;
     color: var(--text);
 }
 
-.cm-dialog-close {
-    background: transparent;
-    border: none;
-    color: var(--text-3);
-    cursor: pointer;
+.cme-dialog-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--danger) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
     display: flex;
     align-items: center;
-    padding: 0.2rem;
-    border-radius: 4px;
-    transition: color 0.15s;
+    justify-content: center;
+    color: var(--danger);
     flex-shrink: 0;
 }
 
-.cm-dialog-close:hover {
-    color: var(--text);
+.cme-dialog-x {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    width: 26px;
+    height: 26px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--text-3);
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
 }
 
-.cm-dialog-msg {
-    padding: 0.85rem 1.1rem;
+.cme-dialog-x:hover {
+    color: var(--text);
+    background: var(--bg-subtle);
+}
+
+.cme-dialog-msg {
+    padding: 0.85rem 1rem;
     font-size: 0.8rem;
     color: var(--text-2);
     line-height: 1.6;
 }
 
-.cm-dialog-btn {
+.cme-dialog-btn {
     display: block;
-    width: calc(100% - 2.2rem);
-    margin: 0 1.1rem 1rem;
+    width: calc(100% - 2rem);
+    margin: 0 1rem 0.9rem;
     padding: 0.5rem;
     background: var(--bg-subtle);
     border: 1px solid var(--border);
     border-radius: 7px;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: var(--text);
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
 }
 
-.cm-dialog-btn:hover {
+.cme-dialog-btn:hover {
     background: var(--bg);
     border-color: var(--text-3);
 }
 
-/* ── id-field guard ─────────────────────────────────────────────────────── */
-.cm-field-name-wrap {
-    position: relative;
+/* ════════════════════════════════════════════════════════════
+   AI BANNER
+════════════════════════════════════════════════════════════ */
+.cme-ai-banner {
     display: flex;
     flex-direction: column;
-    gap: 0;
-    min-width: 0;
+    gap: 0.4rem;
+    padding: 0.75rem 1.1rem;
+    background: color-mix(in srgb, #a855f7 9%, var(--bg-card));
+    border-bottom: 1px solid color-mix(in srgb, #a855f7 25%, var(--border));
+    animation: cme-fade 0.2s ease;
 }
 
-.cm-field-input--error {
-    border-color: #fb7185 !important;
-    background: rgba(251, 113, 133, 0.07);
-    color: #fb7185;
-}
-
-.cm-field-input--error:focus {
-    border-color: #fb7185 !important;
-}
-
-.cm-id-tooltip {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.3rem;
-    margin-top: 3px;
-    padding: 0.35rem 0.5rem;
-    background: rgba(251, 113, 133, 0.1);
-    border: 1px solid rgba(251, 113, 133, 0.3);
-    border-radius: 5px;
-    font-size: 0.67rem;
-    color: #fb7185;
-    line-height: 1.45;
-    animation: cm-fade 0.15s ease;
-}
-
-.cm-id-tooltip svg {
-    flex-shrink: 0;
-    margin-top: 1px;
-    color: #fb7185;
-}
-
-.cm-id-tooltip code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68em;
-    background: rgba(251, 113, 133, 0.15);
-    border-radius: 3px;
-    padding: 0 3px;
-}
-
-.cm-id-tooltip-text {
-    flex: 1;
-}
-
-/* ── MongoDB info banner (top of custom tab) ────────────────────────────── */
-.cm-id-info-banner {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 0.65rem 0.85rem;
-    background: color-mix(in srgb, var(--teal) 7%, var(--bg));
-    border: 1px solid color-mix(in srgb, var(--teal) 20%, var(--border));
-    border-radius: var(--radius);
-    font-size: 0.72rem;
-    color: var(--text-2);
-    line-height: 1.6;
-}
-
-.cm-id-info-banner svg {
-    flex-shrink: 0;
-    margin-top: 1px;
-    color: var(--teal);
-}
-
-.cm-id-info-banner code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.82em;
-    background: color-mix(in srgb, var(--teal) 12%, var(--bg));
-    border: 1px solid color-mix(in srgb, var(--teal) 18%, var(--border));
-    border-radius: 3px;
-    padding: 0 4px;
-    color: var(--teal);
-}
-
-/* ── Footer id warning ───────────────────────────────────────────────────── */
-.cm-footer-id-warn {
-    color: #fb7185;
-    font-weight: 600;
-}
-
-/* ── AI-added fields banner (shown after creation) ──────────────────────── */
-.cm-ai-added-banner {
-    display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-    padding: 0.75rem 1rem;
-    background: color-mix(in srgb, #a855f7 8%, var(--bg));
-    border: 1px solid color-mix(in srgb, #a855f7 25%, var(--border));
-    border-radius: var(--radius);
-    animation: cm-fade 0.2s ease;
-}
-
-.cm-ai-added-banner-title {
+.cme-ai-title {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    font-size: 0.72rem;
-    font-weight: 700;
+    gap: 0.35rem;
+    font-size: 0.73rem;
+    font-weight: 800;
     color: #a855f7;
     letter-spacing: 0.01em;
 }
 
-.cm-ai-added-banner-title svg {
-    color: #a855f7;
-}
-
-.cm-ai-added-callout {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
+.cme-ai-row {
     font-size: 0.72rem;
     color: var(--text-2);
+    display: flex;
     flex-wrap: wrap;
+    gap: 0.25rem;
+    align-items: center;
 }
 
-.cm-ai-added-callout svg {
-    color: #a855f7;
-    flex-shrink: 0;
-}
-
-.cm-ai-added-callout strong {
+.cme-ai-row strong {
     color: var(--text);
-    font-weight: 600;
 }
 
-.cm-ai-added-field {
+.cme-ai-chip {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75em;
-    background: color-mix(in srgb, #a855f7 15%, var(--bg));
-    border: 1px solid color-mix(in srgb, #a855f7 30%, var(--border));
+    font-size: 0.73em;
+    background: color-mix(in srgb, #a855f7 14%, var(--bg));
+    border: 1px solid color-mix(in srgb, #a855f7 28%, var(--border));
     color: #a855f7;
     border-radius: 4px;
     padding: 1px 5px;
-}
-
-/* ── Infer hint code tags ─────────────────────────────────────────────────── */
-.cm-infer-hint code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.82em;
-    background: color-mix(in srgb, var(--teal) 10%, var(--bg));
-    border: 1px solid color-mix(in srgb, var(--teal) 15%, var(--border));
-    border-radius: 3px;
-    padding: 0 4px;
-    color: var(--teal);
 }

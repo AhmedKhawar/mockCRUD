@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar'
 import CreationMode from './CreationMode'
 import './MainApp.css'
 
-const API = 'https://mock-crud-backend.vercel.app'
+const API = window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://mock-crud-backend.vercel.app'
 
 const SparkleIcon = () => (
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

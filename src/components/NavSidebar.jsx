@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 
-const API = 'https://mock-crud-backend.vercel.app'
+const API = window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://mock-crud-backend.vercel.app'
 
 // ── Icons ─────────────────────────────────────────────────────────────────
 const DashboardIcon = () => (

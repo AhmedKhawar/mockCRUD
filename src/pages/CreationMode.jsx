@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import './CreationMode.css'
 
-const DATA_TYPES = ['String', 'Number', 'Boolean', 'Array', 'Object']
+const DATA_TYPES = ['String', 'Number', 'Boolean', 'Date', 'Array', 'Object', 'ObjectId', 'Mixed', 'Buffer', 'Decimal']
 
 // ── Icons ──────────────────────────────────────────────────────────────────
 const PlusIcon = () => (
@@ -11,7 +11,7 @@ const PlusIcon = () => (
     </svg>
 )
 const TrashIcon = () => (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6" />
         <path d="M10 11v6M14 11v6" /><path d="M9 6V4h6v2" />
     </svg>
@@ -21,363 +21,325 @@ const SparkIcon = () => (
         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
     </svg>
 )
-const InfoIcon = () => (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="8.01" /><line x1="12" y1="12" x2="12" y2="16" />
+const LinkIcon = () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+    </svg>
+)
+const LockIcon = () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
 )
 
-// ── Error Dialog (rendered via portal — avoids overflow:hidden clipping) ───
+// ── Error Dialog via portal ────────────────────────────────────────────────
 function ErrorDialog({ message, onClose }) {
     return createPortal(
-        <div className="cm-dialog-backdrop" onClick={onClose}>
-            <div className="cm-dialog" onClick={e => e.stopPropagation()}>
-                <div className="cm-dialog-header">
-                    <div className="cm-dialog-icon-wrap">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div className="cme-backdrop" onClick={onClose}>
+            <div className="cme-dialog" onClick={e => e.stopPropagation()}>
+                <div className="cme-dialog-header">
+                    <div className="cme-dialog-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
                         </svg>
                     </div>
-                    <span className="cm-dialog-title">Generation Failed</span>
-                    <button className="cm-dialog-close" onClick={onClose} aria-label="Close">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <span>Generation Failed</span>
+                    <button className="cme-dialog-x" onClick={onClose}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                         </svg>
                     </button>
                 </div>
-                <p className="cm-dialog-msg">{message}</p>
-                <button className="cm-dialog-btn" onClick={onClose}>Dismiss</button>
+                <p className="cme-dialog-msg">{message}</p>
+                <button className="cme-dialog-btn" onClick={onClose}>Dismiss</button>
             </div>
         </div>,
         document.body
     )
 }
 
-// ── Animated loader overlay ────────────────────────────────────────────────
+// ── Loading overlay ────────────────────────────────────────────────────────
 function LoadingOverlay() {
     return (
-        <div className="cm-loading-overlay">
-            <div className="cm-loading-inner">
-                <div className="cm-loading-dots">
-                    <span /><span /><span />
-                </div>
-                <p className="cm-loading-text">Generating resources…</p>
-            </div>
+        <div className="cme-loading">
+            <div className="cme-loading-dots"><span /><span /><span /></div>
+            <span>Creating resources…</span>
         </div>
     )
 }
 
-// ── Toggle switch ──────────────────────────────────────────────────────────
+// ── Toggle ─────────────────────────────────────────────────────────────────
 function Toggle({ checked, onChange, id }) {
     return (
-        <label className="cm-toggle" htmlFor={id}>
+        <label className="cme-toggle" htmlFor={id}>
             <input id={id} type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} />
-            <span className="cm-toggle-track">
-                <span className="cm-toggle-thumb" />
+            <span className="cme-track"><span className="cme-thumb" /></span>
+        </label>
+    )
+}
+
+// ── Custom checkbox ────────────────────────────────────────────────────────
+function CB({ checked, onChange }) {
+    return (
+        <label className="cme-cb">
+            <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} />
+            <span className="cme-cb-box">
+                {checked && <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
             </span>
         </label>
     )
 }
 
-// ── Checkbox ──────────────────────────────────────────────────────────────
-function Checkbox({ checked, onChange, label, className = '' }) {
+// ── Field row ─────────────────────────────────────────────────────────────
+function FieldRow({ field, onChange, onDelete, isOnly }) {
+    const isBad = field.name.trim().toLowerCase() === 'id'
     return (
-        <label className={`cm-checkbox-label ${className}`}>
-            <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} className="cm-checkbox-native" />
-            <span className="cm-checkbox-box">{checked && (
-                <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
-                    <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-            )}</span>
-            {label && <span className="cm-checkbox-text">{label}</span>}
-        </label>
-    )
-}
-
-// ── Single field row ───────────────────────────────────────────────────────
-function FieldRow({ field, onChange, onDelete }) {
-    const isIdForbidden = field.name.trim().toLowerCase() === 'id'
-
-    return (
-        <div className="cm-field-row">
-            <div className="cm-field-name-wrap">
+        <div className={`cme-field-row${isBad ? ' cme-field-row--bad' : ''}`}>
+            <div className="cme-field-name-cell">
                 <input
-                    className={`cm-field-input${isIdForbidden ? ' cm-field-input--error' : ''}`}
+                    className="cme-field-input"
                     placeholder="fieldName"
                     value={field.name}
                     onChange={e => onChange({ ...field, name: e.target.value })}
                 />
-                {isIdForbidden && (
-                    <div className="cm-id-tooltip">
-                        <InfoIcon />
-                        <span className="cm-id-tooltip-text">
-                            <strong>Do not use "id".</strong> MongoDB auto-creates an <code>_id</code> for every record (exposed as <code>id</code>).
-                            You don't need a specific <code>id</code> field for a resource to be referenced. For example, a student doesn't need an `id` to be referenced by `enrollments`—the generated <code>id</code> is used automatically.
-                            Just use compound names for Foreign Keys (e.g., <code>studentId</code>).
-                        </span>
-                    </div>
-                )}
+                {isBad && <span className="cme-id-badge">use compound e.g. userId</span>}
             </div>
-            <select
-                className="cm-field-select"
-                value={field.type}
-                onChange={e => onChange({ ...field, type: e.target.value })}
-            >
-                {DATA_TYPES.map(t => <option key={t}>{t}</option>)}
-            </select>
-            <div className="cm-field-req-cell">
-                <Checkbox checked={field.required} onChange={v => onChange({ ...field, required: v })} />
+            <div className="cme-select-wrap">
+                <select className="cme-field-select" value={field.type} onChange={e => onChange({ ...field, type: e.target.value })}>
+                    {DATA_TYPES.map(t => <option key={t}>{t}</option>)}
+                </select>
+                <svg className="cme-select-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
             </div>
-            <button className="cm-field-del" onClick={onDelete} title="Delete field">
+            <CB checked={field.required} onChange={v => onChange({ ...field, required: v })} />
+            <button className="cme-del-field" onClick={onDelete} disabled={isOnly} title={isOnly ? 'Need at least one field' : 'Delete field'}>
                 <TrashIcon />
             </button>
         </div>
     )
 }
 
-// ── Resource card ──────────────────────────────────────────────────────────
-function ResourceCard({ resource, index, onChange, onDelete }) {
-    const updateField = (fi, updated) => {
-        const fields = resource.fields.map((f, i) => i === fi ? updated : f)
-        onChange({ ...resource, fields })
+// ── Resource block ─────────────────────────────────────────────────────────
+function ResourceBlock({ resource, index, total, onChange, onDelete }) {
+    const updateField = (fi, val) => onChange({ ...resource, fields: resource.fields.map((f, i) => i === fi ? val : f) })
+    const removeField = fi => onChange({ ...resource, fields: resource.fields.filter((_, i) => i !== fi) })
+    const MAX_FIELDS = 8
+    const addField = () => {
+        if (resource.fields.length >= MAX_FIELDS) return
+        onChange({ ...resource, fields: [...resource.fields, { id: Date.now(), name: '', type: 'String', required: false }] })
     }
-    const deleteField = fi => onChange({ ...resource, fields: resource.fields.filter((_, i) => i !== fi) })
-    const addField = () => onChange({
-        ...resource,
-        fields: [...resource.fields, { id: Date.now(), name: '', type: 'String', required: false }]
-    })
+
+    const handleCount = raw => {
+        if (raw === '') { onChange({ ...resource, inferFieldCount: '' }); return }
+        const n = parseInt(raw, 10)
+        if (!isNaN(n) && n >= 1 && n <= 8) onChange({ ...resource, inferFieldCount: n })
+    }
+
+    const hasIdErr = !resource.inferFields && resource.fields.some(f => f.name.trim().toLowerCase() === 'id')
 
     return (
-        <div className="cm-resource-card">
-            <div className="cm-resource-header">
-                <span className="cm-resource-num">#{index + 1}</span>
+        <div className={`cme-block${hasIdErr ? ' cme-block--err' : ''}`}>
+
+            {/* ── Header strip ── */}
+            <div className="cme-block-head">
+                <span className="cme-block-num">{index + 1}</span>
                 <input
-                    className="cm-resource-name-input"
-                    placeholder="resourceName  (e.g. students, orders)"
+                    className="cme-name-input"
+                    placeholder="Resource name — e.g. users, products, orders"
                     value={resource.name}
                     onChange={e => onChange({ ...resource, name: e.target.value })}
                 />
-                <div className="cm-auth-wrap">
-                    <span className="cm-auth-label">Auth</span>
-                    <Toggle
-                        id={`auth-${resource.id}`}
-                        checked={resource.auth}
-                        onChange={v => onChange({ ...resource, auth: v })}
-                    />
+                <div className="cme-block-controls">
+                    <label className={`cme-link-tag${resource.link ? ' cme-link-tag--on' : ''}`} title="Allow AI to link this to other resources">
+                        <LinkIcon />
+                        <span>Link</span>
+                        <Toggle id={`link-${resource.id}`} checked={resource.link} onChange={v => onChange({ ...resource, link: v })} />
+                    </label>
+                    <label className={`cme-auth-tag${resource.auth ? ' cme-auth-tag--on' : ''}`} title="Require JWT authentication">
+                        <LockIcon />
+                        <span>Auth</span>
+                        <Toggle id={`auth-${resource.id}`} checked={resource.auth} onChange={v => onChange({ ...resource, auth: v })} />
+                    </label>
+                    {total > 1 && (
+                        <button className="cme-del-block" onClick={onDelete} title="Remove resource">
+                            <TrashIcon />
+                        </button>
+                    )}
                 </div>
-                {index > 0 && (
-                    <button className="cm-resource-del" onClick={onDelete} title="Remove resource">
-                        <TrashIcon />
-                    </button>
+            </div>
+
+            {/* ── Infer fields strip ── */}
+            <div className="cme-infer-strip">
+                <button
+                    className={`cme-infer-toggle${resource.inferFields ? ' cme-infer-toggle--on' : ''}`}
+                    onClick={() => onChange({ ...resource, inferFields: !resource.inferFields, inferFieldCount: resource.inferFieldCount || '' })}
+                    type="button"
+                >
+                    <SparkIcon />
+                    Infer fields
+                </button>
+                {resource.inferFields && (
+                    <>
+                        <div className="cme-infer-count">
+                            <input
+                                className="cme-count-input"
+                                type="number"
+                                min="1"
+                                max="8"
+                                step="1"
+                                placeholder=""
+                                value={resource.inferFieldCount ?? ''}
+                                onChange={e => handleCount(e.target.value)}
+                                autoFocus
+                            />
+                            <span className="cme-count-unit">fields</span>
+                            <span className="cme-count-range">(1 – 8)</span>
+                        </div>
+                        <span className="cme-infer-note">
+                            AI will generate {resource.inferFieldCount ? <strong>{resource.inferFieldCount}</strong> : '…'} relevant fields
+                        </span>
+                    </>
                 )}
             </div>
 
-            <div className="cm-fields-section">
-                {resource.fields.length > 0 && (
-                    <div className="cm-field-header-row">
+            {/* ── Manual fields ── */}
+            {!resource.inferFields && (
+                <div className="cme-fields">
+                    <div className="cme-fields-header">
                         <span>Field name</span>
                         <span>Type</span>
                         <span>Req</span>
                         <span />
                     </div>
-                )}
-                {resource.fields.map((f, fi) => (
-                    <FieldRow
-                        key={f.id}
-                        field={f}
-                        onChange={updated => updateField(fi, updated)}
-                        onDelete={() => deleteField(fi)}
-                    />
-                ))}
-                <button className="cm-add-field-btn" onClick={addField}>
-                    <PlusIcon /> Add Field
-                </button>
-            </div>
+                    {resource.fields.map((f, fi) => (
+                        <FieldRow
+                            key={f.id}
+                            field={f}
+                            onChange={v => updateField(fi, v)}
+                            onDelete={() => removeField(fi)}
+                            isOnly={resource.fields.length === 1}
+                        />
+                    ))}
+                    {resource.fields.length < MAX_FIELDS ? (
+                        <button className="cme-add-field" onClick={addField}>
+                            <PlusIcon /> Add field
+                        </button>
+                    ) : (
+                        <span className="cme-fields-cap">Max {MAX_FIELDS} fields reached</span>
+                    )}
+                </div>
+            )}
         </div>
     )
 }
 
-// ── AI-added fields callout (shown after creation) ─────────────────────────
-function AiAddedCallout({ resourceName, fields }) {
-    if (!fields || fields.length === 0) return null
+// ── AI banner ──────────────────────────────────────────────────────────────
+function AiBanner({ results }) {
+    if (!results.length) return null
     return (
-        <div className="cm-ai-added-callout">
-            <SparkIcon />
-            <span>
-                <strong>{resourceName}</strong> — AI added: {fields.map(f => (
-                    <code key={f} className="cm-ai-added-field">{f}</code>
-                ))}
-            </span>
+        <div className="cme-ai-banner">
+            <div className="cme-ai-title"><SparkIcon /> AI completed relationships</div>
+            {results.map(r => (
+                <div key={r.resource} className="cme-ai-row">
+                    <strong>{r.resource}</strong> — added: {r.aiAddedFields.map(f => <code key={f} className="cme-ai-chip">{f}</code>)}
+                </div>
+            ))}
         </div>
     )
 }
 
-const newResource = () => ({
+const fresh = () => ({
     id: Date.now() + Math.random(),
     name: '',
     auth: false,
+    link: true,
+    inferFields: false,
+    inferFieldCount: undefined,
     fields: [{ id: Date.now(), name: '', type: 'String', required: false }],
 })
 
 // ── Main component ─────────────────────────────────────────────────────────
 export default function CreationMode({ onSubmit, loading }) {
-    const [tab, setTab] = useState('custom')
-    const [resources, setResources] = useState([newResource()])
-    const [systemName, setSystemName] = useState('')
+    const [resources, setResources] = useState([fresh()])
     const [error, setError] = useState(null)
-    const [aiAddedResult, setAiAddedResult] = useState([]) // [{resource, aiAddedFields}]
+    const [aiResult, setAiResult] = useState([])
 
-    const resetCustom = () => { setResources([newResource()]); setAiAddedResult([]) }
-    const resetInfer = () => { setSystemName(''); setAiAddedResult([]) }
+    const reset = () => { setResources([fresh()]); setAiResult([]) }
 
-    const updateResource = useCallback((index, updated) => {
-        setResources(prev => prev.map((r, i) => i === index ? updated : r))
-    }, [])
+    const update = useCallback((i, val) => setResources(p => p.map((r, idx) => idx === i ? val : r)), [])
+    const remove = useCallback(i => setResources(p => p.filter((_, idx) => idx !== i)), [])
+    const add = () => setResources(p => p.length < 5 ? [...p, fresh()] : p)
 
-    const deleteResource = useCallback(index => {
-        setResources(prev => prev.filter((_, i) => i !== index))
-    }, [])
+    const hasIdErr = resources.some(r => !r.inferFields && r.fields.some(f => f.name.trim().toLowerCase() === 'id'))
 
-    const addResource = () => setResources(prev => [...prev, newResource()])
-
-    // Check if any field has the forbidden "id" name
-    const hasIdField = resources.some(r =>
-        r.fields.some(f => f.name.trim().toLowerCase() === 'id')
-    )
+    const canSubmit = !hasIdErr && resources.length > 0 &&
+        resources.every(r => r.name.trim()) &&
+        resources.every(r => r.inferFields
+            ? (r.inferFieldCount && r.inferFieldCount > 0)
+            : r.fields.some(f => f.name.trim())
+        )
 
     const handleSubmit = async () => {
-        setAiAddedResult([])
-
-        const payload = tab === 'custom'
-            ? {
-                mode: 'custom',
-                resources: resources.map(r => ({
-                    name: r.name,
-                    auth: r.auth,
-                    fields: r.fields
-                        .filter(f => f.name.trim() && f.name.trim().toLowerCase() !== 'id')
-                        .map(f => ({ name: f.name, type: f.type, required: f.required }))
-                })),
-            }
-            : { mode: 'infer', systemName: systemName.trim() }
-
+        setAiResult([])
+        const payload = {
+            resources: resources.map(r =>
+                r.inferFields
+                    ? { name: r.name, auth: r.auth, link: r.link, inferFields: true, inferFieldCount: r.inferFieldCount }
+                    : {
+                        name: r.name, auth: r.auth, link: r.link, inferFields: false,
+                        fields: r.fields
+                            .filter(f => f.name.trim() && f.name.trim().toLowerCase() !== 'id')
+                            .map(f => ({ name: f.name, type: f.type, required: f.required }))
+                    }
+            )
+        }
         try {
-            const result = await onSubmit(payload)
-            // onSubmit should return the created resources so we can surface AI-added fields
-            if (result && Array.isArray(result)) {
-                const added = result
-                    .filter(r => r.aiAddedFields && r.aiAddedFields.length > 0)
-                    .map(r => ({ resource: r.name, aiAddedFields: r.aiAddedFields }))
-                setAiAddedResult(added)
-            }
-            if (tab === 'custom') resetCustom()
-            else resetInfer()
+            const res = await onSubmit(payload)
+            if (Array.isArray(res)) setAiResult(res.filter(r => r.aiAddedFields?.length).map(r => ({ resource: r.name, aiAddedFields: r.aiAddedFields })))
+            reset()
         } catch (err) {
             setError(err.message || 'Something went wrong')
         }
     }
 
-    const canSubmitCustom = resources.length > 0 &&
-        resources.every(r => r.name.trim()) &&
-        resources.every(r => r.fields.some(f => f.name.trim().length > 0)) &&
-        !hasIdField
-
-    const canSubmitInfer = systemName.trim().length > 0
-
     return (
-        <div className="cm-root">
+        <div className="cme-root">
             {error && <ErrorDialog message={error} onClose={() => setError(null)} />}
             {loading && <LoadingOverlay />}
 
-            {/* AI-added fields notification */}
-            {aiAddedResult.length > 0 && (
-                <div className="cm-ai-added-banner">
-                    <div className="cm-ai-added-banner-title">
-                        <SparkIcon /> AI completed missing relationships
-                    </div>
-                    {aiAddedResult.map(r => (
-                        <AiAddedCallout key={r.resource} resourceName={r.resource} fields={r.aiAddedFields} />
-                    ))}
-                </div>
-            )}
+            <AiBanner results={aiResult} />
 
-            {/* Tabs */}
-            <div className="cm-tabs">
-                <button className={`cm-tab${tab === 'custom' ? ' cm-tab-active' : ''}`} onClick={() => setTab('custom')} disabled={loading}>
-                    Add Custom Resources
-                </button>
-                <button className={`cm-tab${tab === 'infer' ? ' cm-tab-active' : ''}`} onClick={() => setTab('infer')} disabled={loading}>
-                    Generate Full System via Prompt
-                </button>
-            </div>
+            <div className="cme-body">
+                {resources.map((r, i) => (
+                    <ResourceBlock
+                        key={r.id}
+                        resource={r}
+                        index={i}
+                        total={resources.length}
+                        onChange={val => update(i, val)}
+                        onDelete={() => remove(i)}
+                    />
+                ))}
 
-            {/* Custom tab */}
-            {tab === 'custom' && (
-                <div className="cm-body">
-                    {/* MongoDB ID info banner */}
-                    <div className="cm-id-info-banner">
-                        <InfoIcon />
-                        <span>
-                            <strong>How Auto-Generated IDs work:</strong> MongoDB automatically generates an <code>_id</code> for every record (returned in API responses as <code>id</code>).<br />
-                            Because of this, <strong>you do not need to add your own <code>id</code> field</strong>. For instance, a <code>students</code> resource doesn't need an `id` field to be referenced by an `enrollments` resource—the auto-generated <code>id</code> serves perfectly as the Foreign Key target.<br />
-                            When defining Foreign Keys in child resources, simply use compound names like <code>studentId</code> or <code>courseId</code>. The AI will intelligently detect missing relational joins across your resources and inject them automatically!
-                        </span>
-                    </div>
-
-                    {resources.map((r, i) => (
-                        <ResourceCard
-                            key={r.id}
-                            resource={r}
-                            index={i}
-                            onChange={updated => updateResource(i, updated)}
-                            onDelete={() => deleteResource(i)}
-                        />
-                    ))}
-                    <button className="cm-add-resource-btn" onClick={addResource} disabled={loading}>
-                        <PlusIcon /> Add Another Resource
+                {resources.length < 5 ? (
+                    <button className="cme-add-block" onClick={add} disabled={loading}>
+                        <PlusIcon /> Add another resource
                     </button>
-                    <div className="cm-footer">
-                        <span className="cm-footer-stats">
-                            {resources.length} Resource{resources.length !== 1 ? 's' : ''}
-                            {hasIdField && (
-                                <span className="cm-footer-id-warn"> · ⚠ Remove forbidden "id" field</span>
-                            )}
-                        </span>
-                        <button className="btn btn-teal cm-submit-btn" onClick={handleSubmit} disabled={loading || !canSubmitCustom}>
-                            Create Mock Resources
-                        </button>
-                    </div>
-                </div>
-            )}
+                ) : (
+                    <span className="cme-fields-cap">Max resources in one cycle reached</span>
+                )}
 
-            {/* Infer tab */}
-            {tab === 'infer' && (
-                <div className="cm-body">
-                    <div className="cm-infer-section">
-                        <label className="cm-infer-section-label">Describe your system</label>
-                        <input
-                            className="cm-system-input"
-                            placeholder="e.g. student management system, hospital records, e-commerce platform…"
-                            value={systemName}
-                            onChange={e => setSystemName(e.target.value)}
-                            disabled={loading}
-                        />
-                        <p className="cm-infer-hint">
-                            The AI will verify this is a recognisable software system, then infer all entities, fields,
-                            datatypes, required flags, and relational foreign keys. MongoDB automatically generates an <code>_id</code> for
-                            every record (exposed as <code>id</code>) — foreign-key fields in child resources
-                            (e.g. <code>studentId</code> in <code>enrollments</code>) reference that <code>_id</code>.
-                            You do not need to add an <code>id</code> field manually.
-                        </p>
-                    </div>
-                    <div className="cm-footer">
-                        <span />
-                        <button className="btn btn-teal cm-submit-btn" onClick={handleSubmit} disabled={loading || !canSubmitInfer}>
-                            ⚡ Generate Full System
-                        </button>
-                    </div>
+                <div className="cme-footer">
+                    <span className="cme-footer-count">
+                        {resources.length} resource{resources.length !== 1 ? 's' : ''}
+                        {hasIdErr && <span className="cme-footer-err"> · Remove forbidden "id" field</span>}
+                    </span>
+                    <button className="btn btn-teal cme-submit" onClick={handleSubmit} disabled={loading || !canSubmit}>
+                        Create Resources
+                    </button>
                 </div>
-            )}
+            </div>
         </div>
     )
 }

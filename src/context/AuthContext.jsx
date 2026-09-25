@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 
 const AuthContext = createContext(null)
+const API = window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://mock-crud-backend.vercel.app';
 
 export function AuthProvider({ children }) {
     const [token, setToken] = useState(() => localStorage.getItem('token'))
@@ -16,9 +17,7 @@ export function AuthProvider({ children }) {
     }
 
     const loginWithGoogle = async (credential) => {
-        const url = window.location.hostname === "localhost"
-            ? "http://localhost:8000/api/auth/google"
-            : "https://mock-crud-backend.vercel.app/api/auth/google";
+        const url = `${API}/api/auth/google`;
 
         const res = await fetch(url, {
             method: 'POST',
@@ -33,7 +32,7 @@ export function AuthProvider({ children }) {
 
     const logout = async () => {
         try {
-            await fetch('https://mock-crud-backend.vercel.app/api/logout', {
+            await fetch(`${API}/api/logout`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
             })

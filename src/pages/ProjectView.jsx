@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar'
 import CreationMode from './CreationMode'
 import './ProjectView.css'
 
-const API = 'https://mock-crud-backend.vercel.app'
+const API = window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://mock-crud-backend.vercel.app'
 
 const ACCENT_COLORS = [
     { from: '#0d9488', to: '#6366f1' },
