@@ -141,32 +141,44 @@ function ResourceBlock({ resource, index, total, onChange, onDelete }) {
     return (
         <div className={`cme-block${hasIdErr ? ' cme-block--err' : ''}`}>
 
-            {/* ── Header strip ── */}
+            {/* ── Row 1: entity name ── */}
             <div className="cme-block-head">
                 <span className="cme-block-num">{index + 1}</span>
                 <input
                     className="cme-name-input"
-                    placeholder="Resource name — e.g. users, products, orders"
+                    placeholder="e.g. users, products, orders"
                     value={resource.name}
                     onChange={e => onChange({ ...resource, name: e.target.value })}
                 />
-                <div className="cme-block-controls">
-                    <label className={`cme-link-tag${resource.link ? ' cme-link-tag--on' : ''}`} title="Allow AI to link this to other resources">
-                        <LinkIcon />
-                        <span>Link</span>
-                        <Toggle id={`link-${resource.id}`} checked={resource.link} onChange={v => onChange({ ...resource, link: v })} />
-                    </label>
-                    <label className={`cme-auth-tag${resource.auth ? ' cme-auth-tag--on' : ''}`} title="Require JWT authentication">
-                        <LockIcon />
-                        <span>Auth</span>
-                        <Toggle id={`auth-${resource.id}`} checked={resource.auth} onChange={v => onChange({ ...resource, auth: v })} />
-                    </label>
-                    {total > 1 && (
-                        <button className="cme-del-block" onClick={onDelete} title="Remove resource">
-                            <TrashIcon />
-                        </button>
-                    )}
-                </div>
+                {total > 1 && (
+                    <button className="cme-del-block" onClick={onDelete} title="Remove resource">
+                        <TrashIcon />
+                    </button>
+                )}
+            </div>
+
+            {/* ── Row 2: Link / Auth toggles ── */}
+            <div className="cme-block-controls-bar">
+                <button
+                    className={`cme-ctrl-btn${resource.link ? ' cme-ctrl-btn--on' : ''}`}
+                    onClick={() => onChange({ ...resource, link: !resource.link })}
+                    title="Allow AI to inject foreign keys into this resource"
+                    type="button"
+                >
+                    <LinkIcon />
+                    <span>Link</span>
+                    <span className={`cme-ctrl-dot${resource.link ? ' cme-ctrl-dot--on' : ''}`} />
+                </button>
+                <button
+                    className={`cme-ctrl-btn${resource.auth ? ' cme-ctrl-btn--on' : ''}`}
+                    onClick={() => onChange({ ...resource, auth: !resource.auth })}
+                    title="Require JWT authentication on all endpoints"
+                    type="button"
+                >
+                    <LockIcon />
+                    <span>Auth</span>
+                    <span className={`cme-ctrl-dot${resource.auth ? ' cme-ctrl-dot--on' : ''}`} />
+                </button>
             </div>
 
             {/* ── Infer fields strip ── */}

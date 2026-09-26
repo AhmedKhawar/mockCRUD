@@ -105,30 +105,59 @@
     flex-shrink: 0;
 }
 
-/* Auth & Link Tags */
-.cme-auth-tag,
-.cme-link-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.28rem;
-    padding: 0.25rem 0.55rem 0.25rem 0.45rem;
-    border: 1.5px solid var(--border);
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--text-2);
-    background: var(--bg-card);
-    cursor: pointer;
-    user-select: none;
-    transition: all 0.18s;
-    white-space: nowrap;
+/* ── Controls bar (row 2) ─────────────────────────────── */
+.cme-block-controls-bar {
+    display: flex;
+    align-items: stretch;
+    border-top: 1px solid var(--border);
 }
 
-.cme-auth-tag--on,
-.cme-link-tag--on {
-    border-color: var(--teal);
+.cme-ctrl-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.38rem;
+    padding: 0.48rem 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    border: none;
+    border-right: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-3);
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    user-select: none;
+}
+
+.cme-ctrl-btn:last-child {
+    border-right: none;
+}
+
+.cme-ctrl-btn:hover {
     color: var(--teal);
-    background: color-mix(in srgb, var(--teal) 10%, var(--bg-card));
+    background: color-mix(in srgb, var(--teal) 6%, transparent);
+}
+
+.cme-ctrl-btn--on {
+    color: var(--teal);
+    background: color-mix(in srgb, var(--teal) 9%, var(--bg-subtle));
+}
+
+.cme-ctrl-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+
+.cme-ctrl-dot--on {
+    background: var(--teal);
+    box-shadow: 0 0 5px color-mix(in srgb, var(--teal) 55%, transparent);
 }
 
 /* Delete block */
