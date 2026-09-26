@@ -141,7 +141,7 @@ function ResourceBlock({ resource, index, total, onChange, onDelete }) {
     return (
         <div className={`cme-block${hasIdErr ? ' cme-block--err' : ''}`}>
 
-            {/* ── Header: row 1 — entity name ── */}
+            {/* ── Row 1: entity name ── */}
             <div className="cme-block-head">
                 <span className="cme-block-num">{index + 1}</span>
                 <input
@@ -157,31 +157,27 @@ function ResourceBlock({ resource, index, total, onChange, onDelete }) {
                 )}
             </div>
 
-            {/* ── Header: row 2 — controls ── */}
+            {/* ── Row 2: Link / Auth toggles ── */}
             <div className="cme-block-controls-bar">
                 <button
                     className={`cme-ctrl-btn${resource.link ? ' cme-ctrl-btn--on' : ''}`}
                     onClick={() => onChange({ ...resource, link: !resource.link })}
-                    title="Allow AI to link this to other resources"
+                    title="Allow AI to inject foreign keys into this resource"
                     type="button"
                 >
                     <LinkIcon />
                     <span>Link</span>
-                    {resource.link
-                        ? <span className="cme-ctrl-dot cme-ctrl-dot--on" />
-                        : <span className="cme-ctrl-dot" />}
+                    <span className={`cme-ctrl-dot${resource.link ? ' cme-ctrl-dot--on' : ''}`} />
                 </button>
                 <button
                     className={`cme-ctrl-btn${resource.auth ? ' cme-ctrl-btn--on' : ''}`}
                     onClick={() => onChange({ ...resource, auth: !resource.auth })}
-                    title="Require JWT authentication"
+                    title="Require JWT authentication on all endpoints"
                     type="button"
                 >
                     <LockIcon />
                     <span>Auth</span>
-                    {resource.auth
-                        ? <span className="cme-ctrl-dot cme-ctrl-dot--on" />
-                        : <span className="cme-ctrl-dot" />}
+                    <span className={`cme-ctrl-dot${resource.auth ? ' cme-ctrl-dot--on' : ''}`} />
                 </button>
             </div>
 

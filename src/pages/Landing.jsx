@@ -22,11 +22,11 @@ export default function Landing() {
                     <div className="landing-hero">
                         <p className="landing-label">AI-powered · No setup · Always live</p>
                         <h1 className="landing-title">MockCRUD</h1>
-                        <p className="landing-tagline">Turn a prompt into a live REST API.</p>
+                        <p className="landing-tagline">Build a live REST API in seconds.</p>
                         <p className="landing-desc">
-                            Describe your data in plain English — names, fields, relationships.
-                            We generate a full CRUD spec and host it instantly.
-                            No servers, no config, no waiting.
+                            Name your resources, define your fields — or let AI infer them.
+                            Toggle <strong>Link</strong> and the AI maps foreign keys across related entities automatically.
+                            Full CRUD, live instantly. No servers, no config.
                         </p>
                         <div className="landing-actions">
                             {token ? (
@@ -48,13 +48,13 @@ export default function Landing() {
                             <div className="flow-how-step">
                                 <div className="flow-how-num">1</div>
                                 <div className="flow-how-content">
-                                    <h3>Define your models</h3>
+                                    <h3>Build your resources</h3>
                                     <p>
-                                        Use the <strong>Manual Builder</strong> to hand-craft specific resources exactly to your spec, or simply provide an overarching system name like <em>"Inventory App"</em> and allow the AI engine to infer everything for you.
+                                        Add resources with the <strong>Manual Builder</strong> — type a name, add your own fields, mark required ones. Or flip <em>Infer fields</em> and let AI generate the right schema for you instantly.
                                     </p>
                                     <div className="flow-how-modes">
                                         <span className="flow-how-mode-chip">✏️ Manual Builder</span>
-                                        <span className="flow-how-mode-chip">⚡ AI Inference</span>
+                                        <span className="flow-how-mode-chip">⚡ AI Infer Fields</span>
                                     </div>
                                 </div>
                             </div>
@@ -64,9 +64,9 @@ export default function Landing() {
                             <div className="flow-how-step">
                                 <div className="flow-how-num">2</div>
                                 <div className="flow-how-content">
-                                    <h3>AI detects relationships</h3>
+                                    <h3>Enable smart relational linking</h3>
                                     <p>
-                                        The AI automatically identifies missing structural dependencies between your entities. It implicitly maps Foreign Keys (e.g., providing <code>studentId</code> to an enrollments table) and constructs a fully connected CRUD REST API!
+                                        Toggle <strong>Link</strong> on any resource and AI groups logically connected entities together. It injects missing foreign keys (e.g. <code>hospitalId</code> into doctors) while ignoring unrelated tables automatically.
                                     </p>
                                     <div className="flow-how-ep-row-mini">
                                         {['GET', 'POST', 'PUT', 'DELETE'].map(m => (
